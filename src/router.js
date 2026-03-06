@@ -2,8 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from './pages/HomePage.vue'
 
 const prototypes = [
-  // Add prototypes here:
-  // { name: 'example', label: 'Example Prototype' },
+  { name: 'launchpad', label: 'Launchpad' },
 ]
 
 const routes = [

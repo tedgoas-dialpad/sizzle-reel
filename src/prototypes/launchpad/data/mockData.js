@@ -32,9 +32,48 @@ export const handledCalls = {
   total: 269,
   centerLabel: 'Today',
   segments: [
-    { label: 'Inbound', value: 150, color: '#602DFF' },
-    { label: 'Outbound', value: 80, color: '#EA5F94' },
-    { label: 'Connected call-backs', value: 39, color: '#FFBD6A' },
+    {
+      label: 'Inbound', value: 150, color: '#602DFF',
+      tooltipData: {
+        heading: 'Inbound: 3/22',
+        rows: [
+          { label: 'Today:', value: '150' },
+          { label: 'Previous day:', value: '132' },
+        ],
+        extraRows: [
+          { label: 'Top team:', value: '189' },
+          { label: 'Bottom team:', value: '47' },
+        ],
+      },
+    },
+    {
+      label: 'Outbound', value: 80, color: '#EA5F94',
+      tooltipData: {
+        heading: 'Outbound: 3/22',
+        rows: [
+          { label: 'Today:', value: '80' },
+          { label: 'Previous day:', value: '75' },
+        ],
+        extraRows: [
+          { label: 'Top team:', value: '112' },
+          { label: 'Bottom team:', value: '32' },
+        ],
+      },
+    },
+    {
+      label: 'Connected call-backs', value: 39, color: '#FFBD6A',
+      tooltipData: {
+        heading: 'Connected call-backs: 3/22',
+        rows: [
+          { label: 'Today:', value: '39' },
+          { label: 'Previous day:', value: '44' },
+        ],
+        extraRows: [
+          { label: 'Top team:', value: '58' },
+          { label: 'Bottom team:', value: '12' },
+        ],
+      },
+    },
   ],
 }
 
@@ -173,9 +212,48 @@ export const unansweredCalls = {
   total: 122,
   centerLabel: 'This week',
   segments: [
-    { label: 'Missed calls', value: 65, color: '#7C52FF' },
-    { label: 'Abandoned', value: 45, color: '#FF9800' },
-    { label: 'Other', value: 12, color: '#BDBDBD' },
+    {
+      label: 'Missed calls', value: 65, color: '#7C52FF',
+      tooltipData: {
+        heading: 'Missed calls: 3/22',
+        rows: [
+          { label: 'Today:', value: '65' },
+          { label: 'Previous day:', value: '58' },
+        ],
+        extraRows: [
+          { label: 'Top team:', value: '82' },
+          { label: 'Bottom team:', value: '21' },
+        ],
+      },
+    },
+    {
+      label: 'Abandoned', value: 45, color: '#FF9800',
+      tooltipData: {
+        heading: 'Abandoned: 3/22',
+        rows: [
+          { label: 'Today:', value: '45' },
+          { label: 'Previous day:', value: '51' },
+        ],
+        extraRows: [
+          { label: 'Top team:', value: '62' },
+          { label: 'Bottom team:', value: '14' },
+        ],
+      },
+    },
+    {
+      label: 'Other', value: 12, color: '#BDBDBD',
+      tooltipData: {
+        heading: 'Other: 3/22',
+        rows: [
+          { label: 'Today:', value: '12' },
+          { label: 'Previous day:', value: '9' },
+        ],
+        extraRows: [
+          { label: 'Top team:', value: '18' },
+          { label: 'Bottom team:', value: '3' },
+        ],
+      },
+    },
   ],
   secondaryStat: {
     label: 'Abandoned Rate',
@@ -189,8 +267,34 @@ export const aiChatbot = {
   total: 847,
   centerLabel: 'Calls deflected',
   segments: [
-    { label: 'Calls deflected', value: 600, color: '#7C52FF' },
-    { label: 'Not deflected', value: 247, color: '#FF9800' },
+    {
+      label: 'Calls deflected', value: 600, color: '#7C52FF',
+      tooltipData: {
+        heading: 'Calls deflected: 3/22',
+        rows: [
+          { label: 'Today:', value: '600' },
+          { label: 'Previous day:', value: '545' },
+        ],
+        extraRows: [
+          { label: 'Top team:', value: '720' },
+          { label: 'Bottom team:', value: '198' },
+        ],
+      },
+    },
+    {
+      label: 'Not deflected', value: 247, color: '#FF9800',
+      tooltipData: {
+        heading: 'Not deflected: 3/22',
+        rows: [
+          { label: 'Today:', value: '247' },
+          { label: 'Previous day:', value: '280' },
+        ],
+        extraRows: [
+          { label: 'Top team:', value: '310' },
+          { label: 'Bottom team:', value: '95' },
+        ],
+      },
+    },
   ],
   secondaryStat: {
     label: 'Deflection Rate',

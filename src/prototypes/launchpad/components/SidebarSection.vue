@@ -55,7 +55,6 @@
             <span v-if="item.subtitle" class="sidebar-row-subtitle d-body-compact-small" style="color: var(--dt-color-foreground-secondary);">{{ item.subtitle }}</span>
           </div>
         </div>
-        <span v-if="item.badge" class="sidebar-badge">{{ item.badge }}</span>
       </div>
       <a v-if="footerLink" class="sidebar-footer-link d-body-compact-small" href="#">{{ footerLink }}</a>
     </div>
@@ -224,18 +223,6 @@ const isOpen = ref(props.defaultOpen)
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.sidebar-badge {
-  background: var(--dt-color-surface-bold);
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 10px;
-  min-width: 20px;
-  text-align: center;
-  flex-shrink: 0;
 }
 
 .sidebar-footer-link {

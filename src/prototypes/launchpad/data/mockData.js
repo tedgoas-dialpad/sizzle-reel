@@ -86,7 +86,7 @@ export const avgCallDuration = {
       {
         label: 'Average',
         data: [5, 6, 7.5, 8, 8.5],
-        borderColor: '#2196F3',
+        borderColor: '#602DFF',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -95,7 +95,7 @@ export const avgCallDuration = {
       {
         label: 'Previous day',
         data: [4.5, 5.5, 6, 5.8, 6.2],
-        borderColor: '#7C52FF',
+        borderColor: '#A38FF9',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -104,7 +104,7 @@ export const avgCallDuration = {
       {
         label: 'Shortest',
         data: [2, 2.5, 3, 3.5, 3],
-        borderColor: '#FF9800',
+        borderColor: '#FFBD6A',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -113,7 +113,7 @@ export const avgCallDuration = {
       {
         label: 'Longest',
         data: [8, 9, 10, 11, 10.5],
-        borderColor: '#E53935',
+        borderColor: '#EA5F94',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -151,7 +151,7 @@ export const aiScorecards = {
       {
         label: 'Average score',
         data: [85, 87, 88, 90, 88],
-        borderColor: '#2196F3',
+        borderColor: '#602DFF',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -160,7 +160,7 @@ export const aiScorecards = {
       {
         label: 'Previous day',
         data: [80, 82, 83, 84, 85],
-        borderColor: '#7C52FF',
+        borderColor: '#A38FF9',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -169,7 +169,7 @@ export const aiScorecards = {
       {
         label: 'Top CC',
         data: [90, 91, 92, 93, 92],
-        borderColor: '#FF9800',
+        borderColor: '#FFBD6A',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -178,7 +178,7 @@ export const aiScorecards = {
       {
         label: 'Bottom CC',
         data: [60, 55, 58, 62, 65],
-        borderColor: '#E53935',
+        borderColor: '#EA5F94',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -311,7 +311,7 @@ export const aiCsat = {
       {
         label: 'Average score',
         data: [4.5, 4.6, 4.7, 4.8, 4.7],
-        borderColor: '#2196F3',
+        borderColor: '#602DFF',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -320,7 +320,7 @@ export const aiCsat = {
       {
         label: 'Previous day',
         data: [4.2, 4.3, 4.4, 4.3, 4.5],
-        borderColor: '#7C52FF',
+        borderColor: '#A38FF9',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -329,7 +329,7 @@ export const aiCsat = {
       {
         label: 'Top CC',
         data: [4.8, 4.9, 4.9, 5.0, 4.9],
-        borderColor: '#FF9800',
+        borderColor: '#FFBD6A',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,
@@ -338,7 +338,7 @@ export const aiCsat = {
       {
         label: 'Bottom CC',
         data: [3.0, 2.8, 3.2, 3.5, 3.0],
-        borderColor: '#E53935',
+        borderColor: '#EA5F94',
         borderWidth: 2,
         tension: 0.4,
         pointRadius: 0,

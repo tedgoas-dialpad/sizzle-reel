@@ -8,8 +8,27 @@
             <span class="linechart-value d-headline-extra-large">{{ value }}</span>
           </div>
         </div>
-        <div class="linechart-chart">
-          <Line :data="chartDataConfig" :options="chartOptionsConfig" />
+        <div class="linechart-chart" @mouseleave="clearHover">
+          <Line ref="chartRef" :data="chartDataConfig" :options="chartOptionsConfig" :plugins="[hoverEffectsPlugin]" />
+          <transition name="tooltip-fade">
+            <div v-if="activePointIndex !== null" class="linechart-tooltip" :style="tooltipPosition">
+              <div class="linechart-tooltip-body">
+                <div class="linechart-tooltip-header">
+                  {{ chartData.labels[activePointIndex] }}
+                </div>
+                <template v-for="(row, ri) in tooltipRows" :key="ri">
+                  <div class="linechart-tooltip-divider" v-if="ri === 2"></div>
+                  <div class="linechart-tooltip-row">
+                    <span class="linechart-tooltip-row-label">
+                      <span class="linechart-tooltip-dot" :style="{ background: row.color }"></span>
+                      <span>{{ row.label }}:</span>
+                    </span>
+                    <span>{{ row.value }}</span>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </transition>
         </div>
         <div class="linechart-legend">
           <div v-for="ds in chartData.datasets" :key="ds.label" class="linechart-legend-item">
@@ -36,7 +55,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -58,24 +77,145 @@ const props = defineProps({
   rankings: { type: Object, default: null },
 })
 
+const chartRef = ref(null)
+const activePointIndex = ref(null)
+const hoveredDatasetIndex = ref(null)
+
+function clearHover() {
+  activePointIndex.value = null
+  hoveredDatasetIndex.value = null
+}
+
 const chartDataConfig = computed(() => ({
   labels: props.chartData.labels,
-  datasets: props.chartData.datasets.map(ds => ({
+  datasets: props.chartData.datasets.map((ds, i) => ({
     ...ds,
     fill: false,
+    borderWidth: hoveredDatasetIndex.value !== null && hoveredDatasetIndex.value === i ? 4 : 2,
   })),
 }))
+
+// Tooltip rows: one per dataset at the hovered index
+const tooltipRows = computed(() => {
+  if (activePointIndex.value === null) return []
+  return props.chartData.datasets.map(ds => ({
+    label: ds.label,
+    color: ds.borderColor,
+    value: ds.data[activePointIndex.value],
+  }))
+})
+
+// Position tooltip to the right of the hovered point, clamped within container
+const tooltipPosition = computed(() => {
+  if (activePointIndex.value === null) return {}
+  const chart = chartRef.value?.chart
+  if (!chart) return {}
+
+  const meta = chart.getDatasetMeta(0)
+  const point = meta.data[activePointIndex.value]
+  if (!point) return {}
+
+  const { x, y } = point.getProps(['x', 'y'], true)
+  const tooltipW = 170
+  const tooltipH = 120
+  const pad = 8
+
+  let tipX = x + 16
+  let tipY = y - tooltipH / 2
+
+  // Clamp within chart area
+  if (tipX + tooltipW > chart.width - pad) {
+    tipX = x - tooltipW - 16
+  }
+  tipX = Math.max(pad, tipX)
+  tipY = Math.max(pad, Math.min(tipY, chart.height - tooltipH - pad))
+
+  return {
+    top: `${tipY}px`,
+    left: `${tipX}px`,
+  }
+})
+
+// Chart.js plugin for hover effects: vertical dashed line + colored dots
+const hoverEffectsPlugin = {
+  id: 'lineChartHoverEffects',
+  afterDraw(chart) {
+    if (activePointIndex.value === null) return
+    const ctx = chart.ctx
+    const meta = chart.getDatasetMeta(0)
+    const point = meta.data[activePointIndex.value]
+    if (!point) return
+
+    const { x } = point.getProps(['x'], true)
+    const yAxis = chart.scales.y
+
+    // Draw vertical dashed line
+    ctx.save()
+    ctx.beginPath()
+    ctx.setLineDash([4, 4])
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'
+    ctx.lineWidth = 1
+    ctx.moveTo(x, yAxis.top)
+    ctx.lineTo(x, yAxis.bottom)
+    ctx.stroke()
+    ctx.restore()
+
+    // Draw colored dots on each line
+    chart.data.datasets.forEach((ds, dsIndex) => {
+      const dsMeta = chart.getDatasetMeta(dsIndex)
+      const dp = dsMeta.data[activePointIndex.value]
+      if (!dp) return
+
+      const { x: px, y: py } = dp.getProps(['x', 'y'], true)
+      ctx.save()
+      ctx.beginPath()
+      ctx.arc(px, py, 4, 0, Math.PI * 2)
+      ctx.fillStyle = ds.borderColor
+      ctx.fill()
+      ctx.restore()
+    })
+  },
+}
 
 const chartOptionsConfig = {
   responsive: true,
   maintainAspectRatio: false,
+  animation: {
+    duration: 150,
+  },
   interaction: {
     mode: 'index',
     intersect: false,
   },
   plugins: {
     legend: { display: false },
-    tooltip: { enabled: true },
+    tooltip: { enabled: false },
+  },
+  onHover: (event, elements, chart) => {
+    if (!elements.length) {
+      activePointIndex.value = null
+      hoveredDatasetIndex.value = null
+      return
+    }
+    activePointIndex.value = elements[0].index
+
+    // Find the nearest dataset to the cursor
+    if (event.y != null) {
+      let closestDist = Infinity
+      let closestDs = 0
+      elements.forEach(el => {
+        const meta = chart.getDatasetMeta(el.datasetIndex)
+        const pt = meta.data[el.index]
+        if (!pt) return
+        const { y: py } = pt.getProps(['y'], true)
+        const dist = Math.abs(event.y - py)
+        if (dist < closestDist) {
+          closestDist = dist
+          closestDs = el.datasetIndex
+        }
+      })
+      hoveredDatasetIndex.value = closestDs
+    }
   },
   scales: {
     x: {
@@ -170,5 +310,65 @@ const chartOptionsConfig = {
   flex-shrink: 0;
   border-left: 1px solid var(--dt-color-border-default);
   padding-left: 16px;
+}
+
+/* Tooltip */
+.linechart-tooltip {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.tooltip-fade-enter-active,
+.tooltip-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.tooltip-fade-enter-from,
+.tooltip-fade-leave-to {
+  opacity: 0;
+}
+
+.linechart-tooltip-body {
+  background: rgba(249, 249, 249, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 4px;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+  font-size: 12px;
+  color: #3a3a3a;
+  white-space: nowrap;
+}
+
+.linechart-tooltip-header {
+  font-weight: 500;
+}
+
+.linechart-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.linechart-tooltip-row-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.linechart-tooltip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.linechart-tooltip-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.18);
 }
 </style>

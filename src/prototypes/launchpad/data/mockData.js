@@ -1,12 +1,3 @@
-// Sidebar navigation items
-export const navItems = [
-  { label: 'Inbox', icon: 'inbox', badge: 5 },
-  { label: 'Launchpad', icon: 'launchpad', active: true, tag: 'New' },
-  { label: 'Contacts', icon: 'contacts' },
-  { label: 'Channels', icon: 'channels' },
-  { label: 'Threads', icon: 'threads' },
-]
-
 export const sidebarSections = [
   {
     title: 'Favorites',
@@ -18,20 +9,6 @@ export const sidebarSections = [
       { label: 'Claire Reynolds, Lori Smith...', icon: 'group' },
       { label: 'Veronica Smith', subtitle: '⚡ TCB!', avatar: 'VS', avatarColor: '#9E9E9E' },
     ],
-  },
-  {
-    title: 'Contact centers',
-    statusLabel: 'Available',
-    defaultOpen: true,
-    items: [
-      { label: 'Digital Engagement', icon: 'contact-center' },
-      { label: 'Support CC', icon: 'square', iconColor: '#E53935', badge: 3 },
-      { label: 'Billing CC', icon: 'square', iconColor: '#FF9800' },
-      { label: 'CC Help Mainline', icon: 'square', iconColor: '#2196F3' },
-      { label: 'Mobile contact center', icon: 'square', iconColor: '#7C52FF' },
-      { label: 'Web to agent', icon: 'square', iconColor: '#E53935' },
-    ],
-    footerLink: 'Monitor all contact centers',
   },
   {
     title: 'Coaching teams',
@@ -55,9 +32,9 @@ export const handledCalls = {
   total: 269,
   centerLabel: 'Today',
   segments: [
-    { label: 'Inbound', value: 150, color: '#7C52FF' },
-    { label: 'Outbound', value: 80, color: '#FF7043' },
-    { label: 'Connected call-backs', value: 39, color: '#4CAF50' },
+    { label: 'Inbound', value: 150, color: '#602DFF' },
+    { label: 'Outbound', value: 80, color: '#EA5F94' },
+    { label: 'Connected call-backs', value: 39, color: '#FFBD6A' },
   ],
 }
 

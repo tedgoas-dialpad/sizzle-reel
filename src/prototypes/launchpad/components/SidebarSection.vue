@@ -213,6 +213,7 @@ const isOpen = ref(props.defaultOpen)
 }
 
 .sidebar-row-label {
+  font-size: 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

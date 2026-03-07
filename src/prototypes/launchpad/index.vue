@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import TopBar from './components/TopBar.vue'
+import TopBar from '@/components/TopBar.vue'
 import LeftSidebar from './components/LeftSidebar.vue'
 import LaunchpadHeader from './components/LaunchpadHeader.vue'
 import WidgetGrid from './components/WidgetGrid.vue'

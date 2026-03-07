@@ -5,7 +5,7 @@
         <div class="linechart-header">
           <div class="linechart-header-content">
             <span class="linechart-title d-body-base">{{ title }}</span>
-            <span class="linechart-value d-headline-large">{{ value }}</span>
+            <span class="linechart-value d-headline-extra-large">{{ value }}</span>
           </div>
         </div>
         <div class="linechart-chart">

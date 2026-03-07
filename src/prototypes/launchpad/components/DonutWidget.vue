@@ -7,8 +7,8 @@
       <div class="donut-chart-container">
         <Doughnut :data="chartConfig" :options="chartOptions" />
         <div class="donut-center">
-          <span class="donut-center-value d-headline-medium">{{ centerValue }}</span>
-          <span class="donut-center-label d-body-compact-small" style="color: var(--dt-color-foreground-secondary);">{{ centerLabel }}</span>
+          <span class="donut-center-value d-headline-extra-large">{{ centerValue }}</span>
+          <span class="donut-center-label d-body-base" style="color: var(--dt-color-foreground-secondary);">{{ centerLabel }}</span>
         </div>
       </div>
       <div class="donut-legend-area">
@@ -27,7 +27,7 @@
         <div class="donut-legend">
           <div v-for="seg in segments" :key="seg.label" class="donut-legend-item">
             <span class="donut-legend-dot" :style="{ background: seg.color }"></span>
-            <span class="d-body-compact-small">{{ seg.label }}</span>
+            <span class="d-body-base">{{ seg.label }}</span>
           </div>
         </div>
       </div>
@@ -55,7 +55,9 @@ const chartConfig = computed(() => ({
   datasets: [{
     data: props.segments.map(s => s.value),
     backgroundColor: props.segments.map(s => s.color),
-    borderWidth: 0,
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    borderRadius: 4,
     hoverOffset: 4,
   }],
 }))
@@ -63,7 +65,7 @@ const chartConfig = computed(() => ({
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: true,
-  cutout: '70%',
+  cutout: '62%',
   plugins: {
     legend: { display: false },
     tooltip: { enabled: true },
@@ -92,14 +94,15 @@ const chartOptions = {
 .donut-body {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 24px;
   flex: 1;
 }
 
 .donut-chart-container {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 240px;
+  height: 240px;
   flex-shrink: 0;
 }
 
@@ -145,7 +148,7 @@ const chartOptions = {
 .donut-legend {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .donut-legend-item {
@@ -155,9 +158,9 @@ const chartOptions = {
 }
 
 .donut-legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
   flex-shrink: 0;
 }
 </style>

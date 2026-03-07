@@ -22,7 +22,7 @@
               :key="tab"
               class="lp-time-tab"
               :class="{ 'lp-time-tab--active': activeTimeTab === tab }"
-              @click="activeTimeTab = tab"
+              @click="setTimeTab(tab)"
             >
               {{ tab }}
             </button>
@@ -47,10 +47,16 @@
 import { ref } from 'vue'
 import DtIconRefresh from '@dialpad/dialtone-icons/vue3/refresh'
 
-defineEmits(['refresh'])
+const emit = defineEmits(['refresh', 'timeTabChange'])
 
 const timeTabs = ['1D', '1W', '1M']
 const activeTimeTab = ref('1D')
+
+function setTimeTab(tab) {
+  if (tab === activeTimeTab.value) return
+  activeTimeTab.value = tab
+  emit('timeTabChange', tab)
+}
 </script>
 
 <style scoped>

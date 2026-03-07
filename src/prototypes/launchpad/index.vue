@@ -4,7 +4,10 @@
     <div class="launchpad-body">
       <LeftSidebar />
       <main class="launchpad-content">
-        <LaunchpadHeader @refresh="widgetGridRef?.startLoading()" />
+        <LaunchpadHeader
+          @refresh="widgetGridRef?.startLoading()"
+          @time-tab-change="(tab) => widgetGridRef?.setTimeRange(tab)"
+        />
         <WidgetGrid ref="widgetGridRef" />
       </main>
     </div>

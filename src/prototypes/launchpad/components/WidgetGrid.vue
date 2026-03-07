@@ -115,15 +115,33 @@ import { DtSkeletonText, DtSkeletonShape, DtSkeletonParagraph } from '@dialpad/d
 import DonutWidget from './DonutWidget.vue'
 import LineChartWidget from './LineChartWidget.vue'
 import {
-  handledCalls,
-  avgCallDuration,
-  aiScorecards,
-  unansweredCalls,
-  aiChatbot,
-  aiCsat,
+  handledCalls as defaultHandledCalls,
+  avgCallDuration as defaultAvgCallDuration,
+  aiScorecards as defaultAiScorecards,
+  unansweredCalls as defaultUnansweredCalls,
+  aiChatbot as defaultAiChatbot,
+  aiCsat as defaultAiCsat,
+  generateWidgetData,
 } from '../data/mockData.js'
 
 const loading = ref(true)
+
+const handledCalls = ref(defaultHandledCalls)
+const avgCallDuration = ref(defaultAvgCallDuration)
+const aiScorecards = ref(defaultAiScorecards)
+const unansweredCalls = ref(defaultUnansweredCalls)
+const aiChatbot = ref(defaultAiChatbot)
+const aiCsat = ref(defaultAiCsat)
+
+function setTimeRange(timeRange) {
+  const data = generateWidgetData(timeRange)
+  handledCalls.value = data.handledCalls
+  avgCallDuration.value = data.avgCallDuration
+  aiScorecards.value = data.aiScorecards
+  unansweredCalls.value = data.unansweredCalls
+  aiChatbot.value = data.aiChatbot
+  aiCsat.value = data.aiCsat
+}
 
 function startLoading() {
   loading.value = true
@@ -132,7 +150,7 @@ function startLoading() {
 
 onMounted(() => { startLoading() })
 
-defineExpose({ startLoading })
+defineExpose({ startLoading, setTimeRange })
 </script>
 
 <style scoped>

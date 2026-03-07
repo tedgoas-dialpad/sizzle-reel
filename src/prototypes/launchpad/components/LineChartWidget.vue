@@ -271,6 +271,9 @@ const chartOptionsConfig = {
   maintainAspectRatio: false,
   animation: { duration: 0 },
   transitions: {
+    default: {
+      animation: { duration: 700, easing: 'easeOutQuart' },
+    },
     active: {
       animation: { duration: 200 },
     },

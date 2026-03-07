@@ -374,3 +374,328 @@ export const aiCsat = {
     ],
   },
 }
+
+// --- Data generators for time-range switching ---
+
+const timeConfig = {
+  '1D': {
+    labels: ['4 am', '8 am', '12 pm', '4 pm', '8 pm'],
+    centerLabel: 'Today',
+    comparison: 'Previous day',
+  },
+  '1W': {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    centerLabel: 'This week',
+    comparison: 'Previous week',
+  },
+  '1M': {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    centerLabel: 'This month',
+    comparison: 'Previous month',
+  },
+}
+
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+function randFloat(min, max) {
+  return +(Math.random() * (max - min) + min).toFixed(1)
+}
+
+function randSeries(count, min, max) {
+  return Array.from({ length: count }, () => randFloat(min, max))
+}
+
+function pickTrend() {
+  return ['up', 'down', 'neutral'][randInt(0, 2)]
+}
+
+function generateHandledCalls(cfg) {
+  const inbound = randInt(100, 250)
+  const outbound = randInt(40, 120)
+  const callbacks = randInt(15, 60)
+  const total = inbound + outbound + callbacks
+  return {
+    title: 'Handled Calls',
+    total,
+    centerLabel: cfg.centerLabel,
+    segments: [
+      {
+        label: 'Inbound', value: inbound, color: '#602DFF',
+        tooltipData: {
+          heading: 'Inbound: 3/22',
+          rows: [
+            { label: `${cfg.centerLabel}:`, value: `${inbound}` },
+            { label: `${cfg.comparison}:`, value: `${randInt(80, 200)}` },
+          ],
+          extraRows: [
+            { label: 'Top team:', value: `${randInt(150, 300)}` },
+            { label: 'Bottom team:', value: `${randInt(20, 80)}` },
+          ],
+        },
+      },
+      {
+        label: 'Outbound', value: outbound, color: '#EA5F94',
+        tooltipData: {
+          heading: 'Outbound: 3/22',
+          rows: [
+            { label: `${cfg.centerLabel}:`, value: `${outbound}` },
+            { label: `${cfg.comparison}:`, value: `${randInt(30, 100)}` },
+          ],
+          extraRows: [
+            { label: 'Top team:', value: `${randInt(80, 150)}` },
+            { label: 'Bottom team:', value: `${randInt(10, 50)}` },
+          ],
+        },
+      },
+      {
+        label: 'Connected call-backs', value: callbacks, color: '#FFBD6A',
+        tooltipData: {
+          heading: 'Connected call-backs: 3/22',
+          rows: [
+            { label: `${cfg.centerLabel}:`, value: `${callbacks}` },
+            { label: `${cfg.comparison}:`, value: `${randInt(10, 55)}` },
+          ],
+          extraRows: [
+            { label: 'Top team:', value: `${randInt(40, 80)}` },
+            { label: 'Bottom team:', value: `${randInt(5, 20)}` },
+          ],
+        },
+      },
+    ],
+  }
+}
+
+function generateAvgCallDuration(cfg) {
+  const count = cfg.labels.length
+  const avg = randSeries(count, 4, 10)
+  const avgVal = avg[avg.length - 1]
+  return {
+    title: 'Average Call Duration',
+    value: `${Math.floor(avgVal)}m ${randInt(0, 59)}s`,
+    chartData: {
+      labels: cfg.labels,
+      datasets: [
+        { label: 'Average', data: avg, borderColor: '#602DFF', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+        { label: cfg.comparison, data: randSeries(count, 3, 8), borderColor: '#A38FF9', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [5, 5] },
+        { label: 'Shortest', data: randSeries(count, 1, 4), borderColor: '#FFBD6A', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+        { label: 'Longest', data: randSeries(count, 8, 13), borderColor: '#EA5F94', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+      ],
+    },
+    yAxisLabel: 'm',
+    yAxisValues: ['0m', '3m', '6m', '9m', '12m'],
+    rankings: {
+      title: 'Averages',
+      byCCs: [
+        { rank: 1, name: 'Support CC', value: `${randInt(1, 3)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+        { rank: 2, name: 'Billing CC', value: `${randInt(1, 4)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+        { rank: 3, name: 'CC Help Main...', value: `${randInt(3, 6)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+        { rank: 4, name: 'Mobile contact', value: `${randInt(5, 8)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+        { rank: 5, name: 'Web to agent', value: `${randInt(6, 9)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+      ],
+      byAgents: [
+        { rank: 1, name: 'Ben Parker', value: `${randInt(1, 2)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+        { rank: 2, name: 'Alicia K.', value: `${randInt(2, 3)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+        { rank: 3, name: 'Claire R.', value: `${randInt(3, 5)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+        { rank: 4, name: 'Veronica S.', value: `${randInt(5, 7)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+        { rank: 5, name: 'Lori Smith', value: `${randInt(7, 9)}:${String(randInt(0, 59)).padStart(2, '0')}`, trend: pickTrend() },
+      ],
+    },
+  }
+}
+
+function generateAiScorecards(cfg) {
+  const count = cfg.labels.length
+  const avgData = randSeries(count, 82, 95)
+  const avgScore = Math.round(avgData[avgData.length - 1])
+  return {
+    title: 'Ai Scorecards',
+    value: `${avgScore}%`,
+    chartData: {
+      labels: cfg.labels,
+      datasets: [
+        { label: 'Average score', data: avgData, borderColor: '#602DFF', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+        { label: cfg.comparison, data: randSeries(count, 75, 88), borderColor: '#A38FF9', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [5, 5] },
+        { label: 'Top CC', data: randSeries(count, 88, 96), borderColor: '#FFBD6A', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+        { label: 'Bottom CC', data: randSeries(count, 50, 70), borderColor: '#EA5F94', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+      ],
+    },
+    yAxisSuffix: '%',
+    yAxisValues: ['0', '25%', '50%', '75%', '100%'],
+    rankings: {
+      title: 'Rankings',
+      byCCs: [
+        { rank: 1, name: 'Support CC', value: `${randInt(90, 96)}%`, trend: pickTrend() },
+        { rank: 2, name: 'Billing CC', value: `${randInt(87, 93)}%`, trend: pickTrend() },
+        { rank: 3, name: 'CC Help Main...', value: `${randInt(85, 92)}%`, trend: pickTrend() },
+        { rank: 4, name: 'Mobile contact', value: `${randInt(82, 90)}%`, trend: pickTrend() },
+        { rank: 5, name: 'Web to agent', value: `${randInt(78, 86)}%`, trend: pickTrend() },
+      ],
+      byAgents: [
+        { rank: 1, name: 'Ben Parker', value: `${randInt(92, 98)}%`, trend: pickTrend() },
+        { rank: 2, name: 'Alicia K.', value: `${randInt(90, 95)}%`, trend: pickTrend() },
+        { rank: 3, name: 'Claire R.', value: `${randInt(86, 93)}%`, trend: pickTrend() },
+        { rank: 4, name: 'Veronica S.', value: `${randInt(83, 90)}%`, trend: pickTrend() },
+        { rank: 5, name: 'Lori Smith', value: `${randInt(78, 86)}%`, trend: pickTrend() },
+      ],
+    },
+  }
+}
+
+function generateUnansweredCalls(cfg) {
+  const missed = randInt(30, 90)
+  const abandoned = randInt(20, 65)
+  const other = randInt(5, 20)
+  const total = missed + abandoned + other
+  const abandonedRate = randInt(1, 5)
+  return {
+    title: 'Unanswered Calls',
+    total,
+    centerLabel: cfg.centerLabel,
+    segments: [
+      {
+        label: 'Missed calls', value: missed, color: '#602DFF',
+        tooltipData: {
+          heading: 'Missed calls: 3/22',
+          rows: [
+            { label: `${cfg.centerLabel}:`, value: `${missed}` },
+            { label: `${cfg.comparison}:`, value: `${randInt(25, 80)}` },
+          ],
+          extraRows: [
+            { label: 'Top team:', value: `${randInt(60, 100)}` },
+            { label: 'Bottom team:', value: `${randInt(10, 30)}` },
+          ],
+        },
+      },
+      {
+        label: 'Abandoned', value: abandoned, color: '#EA5F94',
+        tooltipData: {
+          heading: 'Abandoned: 3/22',
+          rows: [
+            { label: `${cfg.centerLabel}:`, value: `${abandoned}` },
+            { label: `${cfg.comparison}:`, value: `${randInt(15, 60)}` },
+          ],
+          extraRows: [
+            { label: 'Top team:', value: `${randInt(40, 75)}` },
+            { label: 'Bottom team:', value: `${randInt(5, 20)}` },
+          ],
+        },
+      },
+      {
+        label: 'Other', value: other, color: '#FFBD6A',
+        tooltipData: {
+          heading: 'Other: 3/22',
+          rows: [
+            { label: `${cfg.centerLabel}:`, value: `${other}` },
+            { label: `${cfg.comparison}:`, value: `${randInt(3, 18)}` },
+          ],
+          extraRows: [
+            { label: 'Top team:', value: `${randInt(12, 25)}` },
+            { label: 'Bottom team:', value: `${randInt(1, 8)}` },
+          ],
+        },
+      },
+    ],
+    secondaryStat: {
+      label: 'Abandoned Rate',
+      value: `${abandonedRate}%`,
+      trend: { direction: abandonedRate <= 2 ? 'down' : 'up', amount: `${randInt(1, 3)}`, color: abandonedRate <= 2 ? '#4CAF50' : '#F44336' },
+    },
+  }
+}
+
+function generateAiChatbot(cfg) {
+  const deflected = randInt(400, 800)
+  const notDeflected = randInt(150, 350)
+  const total = deflected + notDeflected
+  const rate = Math.round((deflected / total) * 100)
+  return {
+    title: 'Ai Chatbot',
+    total,
+    centerLabel: 'Calls deflected',
+    segments: [
+      {
+        label: 'Calls deflected', value: deflected, color: '#602DFF',
+        tooltipData: {
+          heading: 'Calls deflected: 3/22',
+          rows: [
+            { label: `${cfg.centerLabel}:`, value: `${deflected}` },
+            { label: `${cfg.comparison}:`, value: `${randInt(350, 750)}` },
+          ],
+          extraRows: [
+            { label: 'Top team:', value: `${randInt(600, 900)}` },
+            { label: 'Bottom team:', value: `${randInt(100, 250)}` },
+          ],
+        },
+      },
+      {
+        label: 'Not deflected', value: notDeflected, color: '#EA5F94',
+        tooltipData: {
+          heading: 'Not deflected: 3/22',
+          rows: [
+            { label: `${cfg.centerLabel}:`, value: `${notDeflected}` },
+            { label: `${cfg.comparison}:`, value: `${randInt(120, 320)}` },
+          ],
+          extraRows: [
+            { label: 'Top team:', value: `${randInt(250, 400)}` },
+            { label: 'Bottom team:', value: `${randInt(60, 130)}` },
+          ],
+        },
+      },
+    ],
+    secondaryStat: {
+      label: 'Deflection Rate',
+      value: `${rate}%`,
+    },
+  }
+}
+
+function generateAiCsat(cfg) {
+  const count = cfg.labels.length
+  const avgData = randSeries(count, 4.2, 4.9)
+  const avgScore = avgData[avgData.length - 1]
+  return {
+    title: 'Ai CSAT',
+    value: `${avgScore}`,
+    chartData: {
+      labels: cfg.labels,
+      datasets: [
+        { label: 'Average score', data: avgData, borderColor: '#602DFF', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+        { label: cfg.comparison, data: randSeries(count, 3.8, 4.6), borderColor: '#A38FF9', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [5, 5] },
+        { label: 'Top CC', data: randSeries(count, 4.6, 5.0), borderColor: '#FFBD6A', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+        { label: 'Bottom CC', data: randSeries(count, 2.5, 3.8), borderColor: '#EA5F94', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+      ],
+    },
+    yAxisValues: ['0', '1', '2', '3', '4', '5'],
+    rankings: {
+      title: 'Rankings',
+      byCCs: [
+        { rank: 1, name: 'Support CC', value: `${randFloat(4.7, 5.0)}`, trend: pickTrend() },
+        { rank: 2, name: 'Billing CC', value: `${randFloat(4.5, 4.9)}`, trend: pickTrend() },
+        { rank: 3, name: 'CC Help Main...', value: `${randFloat(4.3, 4.7)}`, trend: pickTrend() },
+        { rank: 4, name: 'Mobile contact', value: `${randFloat(4.0, 4.5)}`, trend: pickTrend() },
+        { rank: 5, name: 'Web to agent', value: `${randFloat(3.8, 4.3)}`, trend: pickTrend() },
+      ],
+      byAgents: [
+        { rank: 1, name: 'Ben Parker', value: `${randFloat(4.7, 5.0)}`, trend: pickTrend() },
+        { rank: 2, name: 'Alicia K.', value: `${randFloat(4.5, 4.9)}`, trend: pickTrend() },
+        { rank: 3, name: 'Claire R.', value: `${randFloat(4.3, 4.8)}`, trend: pickTrend() },
+        { rank: 4, name: 'Veronica S.', value: `${randFloat(4.0, 4.5)}`, trend: pickTrend() },
+        { rank: 5, name: 'Lori Smith', value: `${randFloat(3.7, 4.2)}`, trend: pickTrend() },
+      ],
+    },
+  }
+}
+
+export function generateWidgetData(timeRange) {
+  const cfg = timeConfig[timeRange]
+  return {
+    handledCalls: generateHandledCalls(cfg),
+    avgCallDuration: generateAvgCallDuration(cfg),
+    aiScorecards: generateAiScorecards(cfg),
+    unansweredCalls: generateUnansweredCalls(cfg),
+    aiChatbot: generateAiChatbot(cfg),
+    aiCsat: generateAiCsat(cfg),
+  }
+}

@@ -1,16 +1,18 @@
 <template>
   <div class="sidebar-section">
     <button class="sidebar-section-header" @click="isOpen = !isOpen">
-      <svg
-        class="sidebar-chevron"
-        :class="{ 'sidebar-chevron--closed': !isOpen }"
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
-        fill="none"
-      >
-        <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5"/>
-      </svg>
+      <span class="sidebar-chevron-wrapper">
+        <svg
+          class="sidebar-chevron"
+          :class="{ 'sidebar-chevron--closed': !isOpen }"
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+        >
+          <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </span>
       <span class="sidebar-section-title d-label-compact-small">{{ title }}</span>
       <span v-if="statusLabel" class="sidebar-section-status">
         <span class="status-dot"></span>
@@ -50,6 +52,11 @@
           <template v-else-if="item.icon === 'square'">
             <span class="sidebar-color-square" :style="{ background: item.iconColor }"></span>
           </template>
+          <template v-else-if="item.icon === 'user'">
+            <span class="sidebar-icon-svg">
+              <DtIconUser size="200" />
+            </span>
+          </template>
           <div class="sidebar-row-text">
             <span class="sidebar-row-label d-body-small">{{ item.label }}</span>
             <span v-if="item.subtitle" class="sidebar-row-subtitle d-body-compact-small" style="color: var(--dt-color-foreground-secondary);">{{ item.subtitle }}</span>
@@ -63,6 +70,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import DtIconUser from '@dialpad/dialtone-icons/vue3/user'
 
 const props = defineProps({
   title: String,
@@ -83,13 +91,22 @@ const isOpen = ref(props.defaultOpen)
 .sidebar-section-header {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   width: 100%;
   padding: 4px 8px;
   border: none;
   background: none;
   cursor: pointer;
   height: 28px;
+}
+
+.sidebar-chevron-wrapper {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .sidebar-section-title {

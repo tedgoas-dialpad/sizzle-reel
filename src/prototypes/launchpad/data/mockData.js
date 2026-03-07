@@ -18,10 +18,19 @@ export const sidebarSections = [
     ],
   },
   {
-    title: 'Channels',
+    title: 'Recents',
     defaultOpen: true,
     items: [
-      { label: 'new-business', icon: 'channel' },
+      { label: '(919) 426-1801', icon: 'user' },
+      { label: '(805) 684-7000', icon: 'user' },
+      { label: '(913) 221-3070', icon: 'user' },
+      { label: '(684) 555-0102', icon: 'user' },
+      { label: '(629) 555-0129', icon: 'user' },
+      { label: '(201) 555-0124', icon: 'user' },
+      { label: '(302) 555-0107', icon: 'user' },
+      { label: '(808) 555-0111', icon: 'user' },
+      { label: '(209) 555-0104', icon: 'user' },
+      { label: '(319) 555-0115', icon: 'user' },
     ],
   },
 ]

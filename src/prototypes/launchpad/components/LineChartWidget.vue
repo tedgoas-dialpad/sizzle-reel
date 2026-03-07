@@ -9,7 +9,7 @@
           </div>
         </div>
         <div class="linechart-chart" @mouseleave="clearHover">
-          <Line ref="chartRef" :data="chartDataConfig" :options="chartOptionsConfig" :plugins="[hoverEffectsPlugin]" />
+          <Line ref="chartRef" :data="chartDataConfig" :options="chartOptionsConfig" :plugins="[progressiveRevealPlugin, hoverEffectsPlugin]" />
           <transition name="tooltip-fade">
             <div v-if="activePointIndex !== null" class="linechart-tooltip" :style="tooltipPosition">
               <div class="linechart-tooltip-body">
@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -224,11 +224,56 @@ const hoverEffectsPlugin = {
   },
 }
 
+// easeOutQuart easing (matches donut chart)
+function easeOutQuart(t) {
+  return 1 - Math.pow(1 - t, 4)
+}
+
+// Chart.js plugin: clips dataset drawing to smoothly reveal lines left-to-right
+const progressiveRevealPlugin = {
+  id: 'progressiveReveal',
+  beforeDatasetsDraw(chart) {
+    if (!chart._revealProgress || chart._revealProgress >= 1) return
+    const { ctx, chartArea: { left, top, right, bottom } } = chart
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(left, top - 10, (right - left) * chart._revealProgress, bottom - top + 20)
+    ctx.clip()
+  },
+  afterDatasetsDraw(chart) {
+    if (!chart._revealProgress || chart._revealProgress >= 1) return
+    chart.ctx.restore()
+  },
+}
+
+onMounted(() => {
+  nextTick(() => {
+    const chart = chartRef.value?.chart
+    if (!chart) return
+
+    chart._revealProgress = 0
+    const startTime = performance.now()
+    const duration = 700
+
+    function tick(now) {
+      const t = Math.min((now - startTime) / duration, 1)
+      chart._revealProgress = easeOutQuart(t)
+      chart.draw()
+      if (t < 1) requestAnimationFrame(tick)
+    }
+
+    requestAnimationFrame(tick)
+  })
+})
+
 const chartOptionsConfig = {
   responsive: true,
   maintainAspectRatio: false,
-  animation: {
-    duration: 150,
+  animation: { duration: 0 },
+  transitions: {
+    active: {
+      animation: { duration: 200 },
+    },
   },
   interaction: {
     mode: 'index',

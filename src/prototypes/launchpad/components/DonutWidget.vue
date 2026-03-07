@@ -107,7 +107,8 @@ const chartOptions = {
     padding: 14,
   },
   animation: {
-    duration: 200,
+    duration: 700,
+    easing: 'easeOutQuart',
   },
   plugins: {
     legend: { display: false },

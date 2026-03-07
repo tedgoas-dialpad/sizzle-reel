@@ -213,7 +213,7 @@ export const unansweredCalls = {
   centerLabel: 'This week',
   segments: [
     {
-      label: 'Missed calls', value: 65, color: '#7C52FF',
+      label: 'Missed calls', value: 65, color: '#602DFF',
       tooltipData: {
         heading: 'Missed calls: 3/22',
         rows: [
@@ -227,7 +227,7 @@ export const unansweredCalls = {
       },
     },
     {
-      label: 'Abandoned', value: 45, color: '#FF9800',
+      label: 'Abandoned', value: 45, color: '#EA5F94',
       tooltipData: {
         heading: 'Abandoned: 3/22',
         rows: [
@@ -241,7 +241,7 @@ export const unansweredCalls = {
       },
     },
     {
-      label: 'Other', value: 12, color: '#BDBDBD',
+      label: 'Other', value: 12, color: '#FFBD6A',
       tooltipData: {
         heading: 'Other: 3/22',
         rows: [
@@ -268,7 +268,7 @@ export const aiChatbot = {
   centerLabel: 'Calls deflected',
   segments: [
     {
-      label: 'Calls deflected', value: 600, color: '#7C52FF',
+      label: 'Calls deflected', value: 600, color: '#602DFF',
       tooltipData: {
         heading: 'Calls deflected: 3/22',
         rows: [
@@ -282,7 +282,7 @@ export const aiChatbot = {
       },
     },
     {
-      label: 'Not deflected', value: 247, color: '#FF9800',
+      label: 'Not deflected', value: 247, color: '#EA5F94',
       tooltipData: {
         heading: 'Not deflected: 3/22',
         rows: [

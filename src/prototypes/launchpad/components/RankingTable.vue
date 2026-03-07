@@ -1,7 +1,7 @@
 <template>
   <div class="ranking-table">
     <div class="ranking-header">
-      <span class="ranking-title d-body-base" style="font-weight: 600;">{{ title }}</span>
+      <span class="ranking-title d-body-base">{{ title }}</span>
     </div>
     <div v-if="tabs" class="ranking-tabs">
       <button
@@ -20,18 +20,18 @@
         :key="item.rank"
         class="ranking-row"
       >
-        <span class="ranking-rank d-body-compact-small">{{ item.rank }}</span>
+        <span class="ranking-rank">{{ item.rank }}</span>
         <span v-if="item.trend" class="ranking-trend">
           <svg v-if="item.trend === 'up'" width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M6 2v8M3 5l3-3 3 3" stroke="#4CAF50" stroke-width="1.5" fill="none"/>
+            <path d="M6 2v8M3 5l3-3 3 3" stroke="#84EE0B" stroke-width="1.5" fill="none"/>
           </svg>
           <svg v-else-if="item.trend === 'down'" width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M6 10V2M3 7l3 3 3-3" stroke="#E53935" stroke-width="1.5" fill="none"/>
+            <path d="M6 10V2M3 7l3 3 3-3" stroke="#FF1356" stroke-width="1.5" fill="none"/>
           </svg>
-          <span v-else style="width: 12px; display: inline-block;"></span>
+          <span v-else class="ranking-trend-spacer"></span>
         </span>
-        <span class="ranking-name d-body-compact-small">{{ item.name }}</span>
-        <span class="ranking-value d-body-compact-small">{{ item.value }}</span>
+        <span class="ranking-name">{{ item.name }}</span>
+        <span class="ranking-value">{{ item.value }}</span>
       </div>
     </div>
   </div>
@@ -61,6 +61,7 @@ const currentData = computed(() => {
   flex-direction: column;
   gap: 8px;
   min-width: 0;
+  height: 100%;
 }
 
 .ranking-header {
@@ -68,58 +69,72 @@ const currentData = computed(() => {
   align-items: center;
 }
 
+.ranking-title {
+  font-weight: 400;
+}
+
 .ranking-tabs {
   display: flex;
-  gap: 0;
-  border: 1px solid var(--dt-color-border-default);
-  border-radius: 8px;
-  overflow: hidden;
-  width: fit-content;
+  gap: 4px;
+  border: 1px solid rgba(28, 28, 28, 0.11);
+  border-radius: 10px;
+  padding: 2px;
+  width: 100%;
 }
 
 .ranking-tab {
-  padding: 4px 12px;
+  flex: 1;
+  padding: 7px 8px;
   border: none;
-  background: var(--dt-color-surface-primary);
+  background: transparent;
   cursor: pointer;
-  font-size: var(--dt-font-size-100);
+  font-size: 12px;
   font-weight: 500;
+  color: #3a3a3a;
   white-space: nowrap;
-}
-
-.ranking-tab:not(:last-child) {
-  border-right: 1px solid var(--dt-color-border-default);
+  border-radius: 8px;
+  line-height: 1.2;
 }
 
 .ranking-tab:hover {
-  background: var(--dt-color-surface-secondary);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .ranking-tab--active {
-  background: var(--dt-color-surface-bold);
-  color: white;
+  background: #F5F0FF;
+  color: #7C52FF;
 }
 
 .ranking-tab--active:hover {
-  background: var(--dt-color-surface-bold);
+  background: #F5F0FF;
 }
 
 .ranking-list {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .ranking-row {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 0;
+  gap: 2px;
+  padding: 8px;
+  border-bottom: 0.5px solid rgba(28, 28, 28, 0.11);
+  font-size: 15px;
+  line-height: 1.4;
+  color: #1c1c1c;
+}
+
+.ranking-row:last-child {
+  border-bottom: none;
 }
 
 .ranking-rank {
-  width: 16px;
-  text-align: right;
-  color: var(--dt-color-foreground-secondary);
+  width: 20px;
   flex-shrink: 0;
 }
 
@@ -127,7 +142,12 @@ const currentData = computed(() => {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  width: 16px;
+  width: 12px;
+}
+
+.ranking-trend-spacer {
+  width: 12px;
+  display: inline-block;
 }
 
 .ranking-name {
@@ -141,6 +161,6 @@ const currentData = computed(() => {
 .ranking-value {
   flex-shrink: 0;
   text-align: right;
-  color: var(--dt-color-foreground-secondary);
+  white-space: nowrap;
 }
 </style>

@@ -31,15 +31,21 @@
           </transition>
         </div>
         <div class="linechart-legend">
-          <div v-for="ds in chartData.datasets" :key="ds.label" class="linechart-legend-item">
+          <div
+            v-for="(ds, i) in chartData.datasets"
+            :key="ds.label"
+            class="linechart-legend-item"
+            :class="{
+              'linechart-legend-item--selected': selectedDatasetIndex === i,
+              'linechart-legend-item--faded': selectedDatasetIndex !== null && selectedDatasetIndex !== i,
+            }"
+            @click="toggleSelection(i)"
+          >
             <span
-              class="linechart-legend-line"
-              :style="{
-                borderColor: ds.borderColor,
-                borderStyle: ds.borderDash?.length ? 'dashed' : 'solid',
-              }"
+              class="linechart-legend-dot"
+              :style="legendDotStyle(ds, i)"
             ></span>
-            <span class="d-body-compact-small" style="color: var(--dt-color-foreground-secondary);">{{ ds.label }}</span>
+            <span>{{ ds.label }}</span>
           </div>
         </div>
       </div>
@@ -80,19 +86,60 @@ const props = defineProps({
 const chartRef = ref(null)
 const activePointIndex = ref(null)
 const hoveredDatasetIndex = ref(null)
+const selectedDatasetIndex = ref(null)
 
 function clearHover() {
   activePointIndex.value = null
   hoveredDatasetIndex.value = null
 }
 
+function toggleSelection(index) {
+  selectedDatasetIndex.value = selectedDatasetIndex.value === index ? null : index
+}
+
+function legendDotStyle(ds, index) {
+  if (selectedDatasetIndex.value === index) {
+    return {
+      '--dot-size': '16px',
+      '--dot-radius': '6px',
+      '--dot-bg': ds.borderColor,
+      '--dot-border': `1.5px solid ${ds.borderColor}`,
+    }
+  }
+  if (selectedDatasetIndex.value !== null && selectedDatasetIndex.value !== index) {
+    return {
+      '--dot-size': '12px',
+      '--dot-radius': '4px',
+      '--dot-bg': 'rgba(28,28,28,0.02)',
+      '--dot-border': '1px solid rgba(28,28,28,0.3)',
+    }
+  }
+  return {
+    '--dot-size': '12px',
+    '--dot-radius': '4px',
+    '--dot-bg': ds.borderColor,
+    '--dot-border': 'none',
+  }
+}
+
 const chartDataConfig = computed(() => ({
   labels: props.chartData.labels,
-  datasets: props.chartData.datasets.map((ds, i) => ({
-    ...ds,
-    fill: false,
-    borderWidth: hoveredDatasetIndex.value !== null && hoveredDatasetIndex.value === i ? 4 : 2,
-  })),
+  datasets: props.chartData.datasets.map((ds, i) => {
+    const selected = selectedDatasetIndex.value
+    if (selected !== null) {
+      return {
+        ...ds,
+        fill: false,
+        borderWidth: selected === i ? 4 : 2,
+        borderColor: selected === i ? ds.borderColor : ds.borderColor + '40',
+      }
+    }
+    return {
+      ...ds,
+      fill: false,
+      borderWidth: hoveredDatasetIndex.value !== null && hoveredDatasetIndex.value === i ? 4 : 2,
+    }
+  }),
 }))
 
 // Tooltip rows: one per dataset at the hovered index
@@ -289,20 +336,43 @@ const chartOptionsConfig = {
 .linechart-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 6px;
+  justify-content: center;
 }
 
 .linechart-legend-item {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 2px 6px 2px 4px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #1c1c1c;
+  border-radius: 8px;
 }
 
-.linechart-legend-line {
-  width: 20px;
-  height: 0;
-  border-bottom-width: 2px;
-  display: inline-block;
+.linechart-legend-item--selected {
+  background: rgba(28, 28, 28, 0.05);
+}
+
+.linechart-legend-dot {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.linechart-legend-dot::after {
+  content: '';
+  display: block;
+  width: var(--dot-size, 12px);
+  height: var(--dot-size, 12px);
+  border-radius: var(--dot-radius, 4px);
+  background: var(--dot-bg);
+  border: var(--dot-border, none);
+  transition: all 0.15s ease;
 }
 
 .linechart-right {

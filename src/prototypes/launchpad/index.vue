@@ -4,18 +4,21 @@
     <div class="launchpad-body">
       <LeftSidebar />
       <main class="launchpad-content">
-        <LaunchpadHeader />
-        <WidgetGrid />
+        <LaunchpadHeader @refresh="widgetGridRef?.startLoading()" />
+        <WidgetGrid ref="widgetGridRef" />
       </main>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import TopBar from '@/components/TopBar.vue'
 import LeftSidebar from './components/LeftSidebar.vue'
 import LaunchpadHeader from './components/LaunchpadHeader.vue'
 import WidgetGrid from './components/WidgetGrid.vue'
+
+const widgetGridRef = ref(null)
 </script>
 
 <style scoped>

@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="lp-header-right">
-        <button class="lp-action-btn">
+        <button class="lp-action-btn" @click="$emit('refresh')">
           <DtIconRefresh size="200" />
           <span>Refresh</span>
         </button>
@@ -46,6 +46,8 @@
 <script setup>
 import { ref } from 'vue'
 import DtIconRefresh from '@dialpad/dialtone-icons/vue3/refresh'
+
+defineEmits(['refresh'])
 
 const timeTabs = ['1D', '1W', '1M']
 const activeTimeTab = ref('1D')

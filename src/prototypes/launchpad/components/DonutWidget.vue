@@ -32,14 +32,14 @@
       </div>
       <div class="donut-legend-area">
         <div v-if="secondaryStat" class="donut-secondary" :style="{ opacity: activeSegmentIndex !== null ? 0.3 : 1, transition: 'opacity 0.25s ease' }">
-          <span class="d-body-compact-small" style="color: var(--dt-color-foreground-secondary);">{{ secondaryStat.label }}</span>
+          <span class="d-body-base" style="color: #1c1c1c;">{{ secondaryStat.label }}</span>
           <div class="donut-secondary-value">
-            <span class="d-headline-medium">{{ secondaryStat.value }}</span>
+            <span class="d-headline-extra-large">{{ secondaryStat.value }}</span>
             <span v-if="secondaryStat.trend" class="donut-trend">
               <svg v-if="secondaryStat.trend.direction === 'down'" width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M7 11V3M4 8l3 3 3-3" :stroke="secondaryStat.trend.color || '#4CAF50'" stroke-width="1.5" fill="none"/>
               </svg>
-              <span class="d-body-compact-small" :style="{ color: secondaryStat.trend.color || '#4CAF50' }">{{ secondaryStat.trend.amount }}</span>
+              <span class="d-body-base" :style="{ color: secondaryStat.trend.color || '#4CAF50' }">{{ secondaryStat.trend.amount }}</span>
             </span>
           </div>
         </div>
@@ -218,7 +218,7 @@ const tooltipPosition = computed(() => {
 
 .donut-secondary-value {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 4px;
 }
 

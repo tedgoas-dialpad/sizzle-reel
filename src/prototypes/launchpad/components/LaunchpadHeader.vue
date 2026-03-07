@@ -31,7 +31,7 @@
       </div>
       <div class="lp-header-right">
         <button class="lp-action-btn">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 10a7 7 0 0 1 10-6M11 4V1h3" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+          <DtIconRefresh size="200" />
           <span>Refresh</span>
         </button>
         <button class="lp-action-btn">
@@ -45,6 +45,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import DtIconRefresh from '@dialpad/dialtone-icons/vue3/refresh'
 
 const timeTabs = ['1D', '1W', '1M']
 const activeTimeTab = ref('1D')

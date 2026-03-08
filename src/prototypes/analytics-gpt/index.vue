@@ -2,13 +2,14 @@
   <div class="analytics-gpt-app">
     <LeftBar activeItem="trending-up" />
     <main class="analytics-gpt-content">
-      <!-- AnalyticsGPT prototype content goes here -->
+      <ChatWorkspace />
     </main>
   </div>
 </template>
 
 <script setup>
 import LeftBar from '@/components/LeftBar.vue'
+import ChatWorkspace from './components/ChatWorkspace.vue'
 </script>
 
 <style scoped>

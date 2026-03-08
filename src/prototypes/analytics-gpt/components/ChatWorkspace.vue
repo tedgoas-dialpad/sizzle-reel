@@ -36,7 +36,7 @@
         </div>
 
         <!-- Suggestion chips -->
-        <div class="suggestions">
+        <div class="suggestions" :class="{ 'is-refreshing': isRefreshing }">
           <button
             v-for="chip in suggestionChips"
             :key="chip"
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Refresh suggestions -->
-        <button class="refresh-btn">
+        <button class="refresh-btn" :disabled="isRefreshing" @click="refreshSuggestions">
           <DtIconRefresh size="200" />
           <span>Refresh Suggestions</span>
         </button>
@@ -64,14 +64,43 @@ import DtIconSend from '@dialpad/dialtone-icons/vue3/send'
 import DtIconRefresh from '@dialpad/dialtone-icons/vue3/refresh'
 
 const textareaRef = ref(null)
+const isRefreshing = ref(false)
 
-const suggestionChips = [
-  'Show me handle times',
-  'Top performers by CSAT',
-  'Analyze call volume',
-  'Count of missed calls',
-  'Review high wait times',
+const chipSets = [
+  [
+    'Show me handle times',
+    'Top performers by CSAT',
+    'Analyze call volume',
+    'Count of missed calls',
+    'Review high wait times',
+  ],
+  [
+    'Review high hold times',
+    'What is SLA?',
+    'Top answered calls and sessions by contact centers',
+    'Show me voice and digital SLA',
+    'Review agent productivity percentage',
+  ],
+  [
+    'Compare weekly call trends',
+    'Busiest hours by queue',
+    'Average speed of answer',
+    'Agent utilization rates',
+    'Abandoned call reasons',
+  ],
 ]
+
+let currentSetIndex = 0
+const suggestionChips = ref(chipSets[currentSetIndex])
+
+function refreshSuggestions () {
+  isRefreshing.value = true
+  setTimeout(() => {
+    currentSetIndex = (currentSetIndex + 1) % chipSets.length
+    suggestionChips.value = chipSets[currentSetIndex]
+    isRefreshing.value = false
+  }, 2000)
+}
 
 function selectChip (text) {
   textareaRef.value.value = text
@@ -262,7 +291,36 @@ function autoResize (event) {
   cursor: pointer;
 }
 
-.refresh-btn:hover {
+.refresh-btn:hover:not(:disabled) {
   background: rgba(28, 28, 28, 0.05);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.suggestions.is-refreshing .suggestion-chip {
+  opacity: 0.32;
+  background-image: linear-gradient(170deg,
+    rgba(71,21,113,0.1) 0%,
+    rgba(85,27,132,0.1) 3.08%,
+    rgba(124,34,158,0.1) 14.48%,
+    rgba(144,36,164,0.1) 23.67%,
+    rgba(176,34,144,0.1) 35.5%,
+    rgba(211,43,134,0.1) 48.3%,
+    rgba(233,47,111,0.1) 60.29%,
+    rgba(246,72,79,0.1) 70.08%,
+    rgba(251,115,40,0.1) 90.02%,
+    rgba(243,150,15,0.1) 97.29%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 </style>

@@ -42,9 +42,11 @@
             @input="autoResize"
             @keydown.enter.exact.prevent="sendMessage"
           />
-          <button class="composer-send-btn" aria-label="Send" @click="sendMessage">
-            <DtIconSend size="300" />
-          </button>
+          <div class="composer-action-bar">
+            <button class="composer-send-btn" :class="{ 'has-input': hasInput }" aria-label="Send" @click="sendMessage">
+              <DtIconSend size="300" />
+            </button>
+          </div>
         </div>
 
         <!-- Suggestion chips -->
@@ -179,12 +181,14 @@
           @input="autoResize"
           @keydown.enter.exact.prevent="sendMessage"
         />
-        <button v-if="phase === 'busy'" class="composer-send-btn" aria-label="Stop">
-          <DtIconStopCircle size="300" />
-        </button>
-        <button v-else class="composer-send-btn" aria-label="Send" @click="sendMessage">
-          <DtIconSend size="300" />
-        </button>
+        <div class="composer-action-bar">
+          <button v-if="phase === 'busy'" class="composer-send-btn" aria-label="Stop">
+            <DtIconStopCircle size="300" />
+          </button>
+          <button v-else class="composer-send-btn" :class="{ 'has-input': hasInput }" aria-label="Send" @click="sendMessage">
+            <DtIconSend size="300" />
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -208,6 +212,7 @@ import LineChartWidget from '../../launchpad/components/LineChartWidget.vue'
 const textareaRef = ref(null)
 const conversationRef = ref(null)
 const isRefreshing = ref(false)
+const hasInput = ref(false)
 
 const isScrolling = ref(false)
 const isAtBottom = ref(true)
@@ -276,6 +281,7 @@ function sendMessage () {
   const pendingQuestion = text
   textareaRef.value.value = ''
   textareaRef.value.style.height = 'auto'
+  hasInput.value = false
   phase.value = 'busy'
   scrollToBottom()
 
@@ -391,6 +397,7 @@ function autoResize (event) {
   const el = event.target
   el.style.height = 'auto'
   el.style.height = el.scrollHeight + 'px'
+  hasInput.value = el.value.trim().length > 0
 }
 
 const mockAnswers = {
@@ -654,6 +661,10 @@ function selectFollowup (text) {
   margin-bottom: 16px;
 }
 
+.composer:focus-within {
+  border-color: rgba(28, 28, 28, 0.35);
+}
+
 .chat-body--conversation .composer {
   margin: 0 0 24px;
   max-width: 732px;
@@ -664,17 +675,30 @@ function selectFollowup (text) {
 
 .composer-input {
   width: 100%;
-  padding: 14px 48px 14px 16px;
+  padding: 8px 16px 0;
   border: none;
-  border-radius: 16px;
+  border-radius: 16px 16px 0 0;
   font-family: inherit;
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #1C1C1C;
   background: transparent;
   resize: none;
   outline: none;
   box-sizing: border-box;
+}
+
+.composer-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px 8px;
+}
+
+.composer-input:focus,
+.composer-input:focus-visible {
+  outline: none !important;
+  box-shadow: none;
 }
 
 .composer-input::placeholder {
@@ -687,9 +711,6 @@ function selectFollowup (text) {
 }
 
 .composer-send-btn {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -706,6 +727,17 @@ function selectFollowup (text) {
 .composer-send-btn:hover {
   background: rgba(28, 28, 28, 0.05);
   color: #535353;
+}
+
+.composer-send-btn.has-input {
+  background: linear-gradient(135deg, #471571 0%, #551B84 3.08%, #7C229E 14.48%, #9024A4 23.67%, #B02290 35.5%, #D32B86 48.3%, #E92F6F 60.29%, #F6484F 70.08%, #FB7328 90.02%, #F3960F 97.29%);
+  color: #FFFFFF;
+  border-radius: 50%;
+}
+
+.composer-send-btn.has-input:hover {
+  background: linear-gradient(135deg, #471571 0%, #551B84 3.08%, #7C229E 14.48%, #9024A4 23.67%, #B02290 35.5%, #D32B86 48.3%, #E92F6F 60.29%, #F6484F 70.08%, #FB7328 90.02%, #F3960F 97.29%);
+  opacity: 0.9;
 }
 
 /* Conversation area */

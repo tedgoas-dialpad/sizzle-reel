@@ -5,10 +5,21 @@
       <button class="header-icon-btn" aria-label="Past conversations">
         <DtIconPastConversations size="300" />
       </button>
+      <template v-if="phase !== 'welcome'">
+        <span class="session-title">{{ userMessage }}</span>
+        <button class="header-icon-btn" aria-label="Options">
+          <DtIconChevronDown size="200" />
+        </button>
+      </template>
+      <div v-if="phase !== 'welcome'" class="header-spacer" />
+      <button v-if="phase !== 'welcome'" class="new-chat-btn" @click="resetChat">
+        <DtIconPlus size="200" />
+        <span>New Chat</span>
+      </button>
     </div>
 
-    <!-- Centered conversation area -->
-    <div class="chat-body">
+    <!-- Welcome state -->
+    <div v-if="phase === 'welcome'" class="chat-body">
       <div class="chat-center">
         <!-- Welcome hero -->
         <div class="welcome-hero">
@@ -29,8 +40,9 @@
             placeholder="Ask me any Analytics questions"
             rows="1"
             @input="autoResize"
+            @keydown.enter.exact.prevent="sendMessage"
           />
-          <button class="composer-send-btn" aria-label="Send">
+          <button class="composer-send-btn" aria-label="Send" @click="sendMessage">
             <DtIconSend size="300" />
           </button>
         </div>
@@ -54,17 +66,136 @@
         </button>
       </div>
     </div>
+
+    <!-- Conversation state -->
+    <div v-else class="chat-body chat-body--conversation">
+      <div class="conversation-area">
+        <!-- User message -->
+        <div class="user-message">
+          <div class="user-avatar">
+            <DtIconUser size="200" />
+          </div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-author">You</span>
+              <span class="message-time">12:35</span>
+            </div>
+            <p class="message-text">{{ userMessage }}</p>
+          </div>
+        </div>
+
+        <!-- Processing indicator -->
+        <div v-if="phase === 'busy'" class="processing-module">
+          <div class="processing-bar">
+            <div class="processing-spinner" />
+            <span class="processing-text">{{ busyText }}</span>
+          </div>
+        </div>
+
+        <!-- Done placeholder -->
+        <div v-if="phase === 'done'" class="done-placeholder">
+          Done
+        </div>
+      </div>
+
+      <!-- Composer (bottom-pinned) -->
+      <div class="composer">
+        <textarea
+          ref="textareaRef"
+          class="composer-input"
+          placeholder="Ask me any Analytics questions"
+          rows="1"
+          :disabled="phase === 'busy'"
+          @input="autoResize"
+          @keydown.enter.exact.prevent="sendMessage"
+        />
+        <button v-if="phase === 'busy'" class="composer-send-btn" aria-label="Stop">
+          <DtIconStopCircle size="300" />
+        </button>
+        <button v-else class="composer-send-btn" aria-label="Send" @click="sendMessage">
+          <DtIconSend size="300" />
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import DtIconPastConversations from '@dialpad/dialtone-icons/vue3/past-conversations'
 import DtIconSend from '@dialpad/dialtone-icons/vue3/send'
 import DtIconRefresh from '@dialpad/dialtone-icons/vue3/refresh'
+import DtIconChevronDown from '@dialpad/dialtone-icons/vue3/chevron-down'
+import DtIconPlus from '@dialpad/dialtone-icons/vue3/plus'
+import DtIconUser from '@dialpad/dialtone-icons/vue3/user'
+import DtIconStopCircle from '@dialpad/dialtone-icons/vue3/stop-circle'
 
 const textareaRef = ref(null)
 const isRefreshing = ref(false)
+
+// State machine: 'welcome' | 'busy' | 'done'
+const phase = ref('welcome')
+const userMessage = ref('')
+const busyText = ref('')
+
+const busyPhrases = [
+  'Understanding your question...',
+  'Searching analytics data...',
+  'Analyzing results...',
+  'Preparing response...',
+]
+
+let phraseInterval = null
+let doneTimeout = null
+
+function sendMessage () {
+  const text = textareaRef.value?.value?.trim()
+  if (!text || phase.value === 'busy') return
+
+  userMessage.value = text
+  textareaRef.value.value = ''
+  textareaRef.value.style.height = 'auto'
+  phase.value = 'busy'
+
+  // Start cycling phrases
+  let phraseIndex = 0
+  busyText.value = busyPhrases[phraseIndex]
+
+  phraseInterval = setInterval(() => {
+    phraseIndex++
+    if (phraseIndex < busyPhrases.length) {
+      busyText.value = busyPhrases[phraseIndex]
+    } else {
+      clearInterval(phraseInterval)
+      phraseInterval = null
+    }
+  }, 1500)
+
+  // Transition to done after all phrases have shown
+  doneTimeout = setTimeout(() => {
+    clearInterval(phraseInterval)
+    phraseInterval = null
+    phase.value = 'done'
+  }, busyPhrases.length * 1500)
+}
+
+function resetChat () {
+  clearInterval(phraseInterval)
+  clearTimeout(doneTimeout)
+  phraseInterval = null
+  doneTimeout = null
+  phase.value = 'welcome'
+  userMessage.value = ''
+  busyText.value = ''
+  isRefreshing.value = false
+  currentSetIndex = 0
+  suggestionChips.value = chipSets[currentSetIndex]
+}
+
+onUnmounted(() => {
+  clearInterval(phraseInterval)
+  clearTimeout(doneTimeout)
+})
 
 const chipSets = [
   [
@@ -104,7 +235,7 @@ function refreshSuggestions () {
 
 function selectChip (text) {
   textareaRef.value.value = text
-  textareaRef.value.focus()
+  sendMessage()
 }
 
 function autoResize (event) {
@@ -129,6 +260,7 @@ function autoResize (event) {
   height: 48px;
   padding: 0 12px;
   flex-shrink: 0;
+  gap: 4px;
 }
 
 .header-icon-btn {
@@ -143,9 +275,45 @@ function autoResize (event) {
   color: #535353;
   cursor: pointer;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .header-icon-btn:hover {
+  background: rgba(28, 28, 28, 0.05);
+}
+
+.session-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #3A3A3A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.header-spacer {
+  flex: 1;
+}
+
+.new-chat-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px 8px 8px;
+  border: 1px solid rgba(28, 28, 28, 0.11);
+  border-radius: 8px;
+  background: none;
+  color: #3A3A3A;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.new-chat-btn:hover {
   background: rgba(28, 28, 28, 0.05);
 }
 
@@ -156,6 +324,16 @@ function autoResize (event) {
   justify-content: center;
   overflow-y: auto;
   padding: 0 24px 48px;
+}
+
+.chat-body--conversation {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0;
+  max-width: 732px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .chat-center {
@@ -209,6 +387,10 @@ function autoResize (event) {
   margin-bottom: 16px;
 }
 
+.chat-body--conversation .composer {
+  margin: 0 0 24px;
+}
+
 .composer-input {
   width: 100%;
   padding: 14px 48px 14px 16px;
@@ -226,6 +408,11 @@ function autoResize (event) {
 
 .composer-input::placeholder {
   color: #9A9A9A;
+}
+
+.composer-input:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .composer-send-btn {
@@ -248,6 +435,125 @@ function autoResize (event) {
 .composer-send-btn:hover {
   background: rgba(28, 28, 28, 0.05);
   color: #535353;
+}
+
+/* Conversation area */
+.conversation-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+}
+
+.user-message {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #E0E0E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #757575;
+  flex-shrink: 0;
+}
+
+.message-content {
+  min-width: 0;
+}
+
+.message-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.message-author {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1C1C1C;
+}
+
+.message-time {
+  font-size: 12px;
+  color: #535353;
+}
+
+.message-text {
+  font-size: 15px;
+  color: #1C1C1C;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Processing module */
+.processing-module {
+  padding: 4px 0;
+}
+
+.processing-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background-image: linear-gradient(170deg,
+    rgba(71,21,113,0.1) 0%,
+    rgba(85,27,132,0.1) 3.08%,
+    rgba(124,34,158,0.1) 14.48%,
+    rgba(144,36,164,0.1) 23.67%,
+    rgba(176,34,144,0.1) 35.5%,
+    rgba(211,43,134,0.1) 48.3%,
+    rgba(233,47,111,0.1) 60.29%,
+    rgba(246,72,79,0.1) 70.08%,
+    rgba(251,115,40,0.1) 90.02%,
+    rgba(243,150,15,0.1) 97.29%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.processing-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    #471571 60deg,
+    #7C229E 120deg,
+    #B02290 180deg,
+    #E92F6F 240deg,
+    #FB7328 300deg,
+    transparent 360deg
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2.5px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2.5px));
+  animation: spin 1s linear infinite;
+  flex-shrink: 0;
+}
+
+.processing-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1C1C1C;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Done placeholder */
+.done-placeholder {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1C1C1C;
+  padding: 16px 0;
 }
 
 .suggestions {

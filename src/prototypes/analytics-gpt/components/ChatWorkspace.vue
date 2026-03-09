@@ -100,6 +100,33 @@
               </div>
               <div class="ai-message-text" v-html="msg.answer" />
 
+              <!-- Chart widget (only for messages with chart config) -->
+              <div v-if="msg.chart" class="chart-widget-container">
+                <!-- Loading state -->
+                <div v-if="msg.chartLoading" class="chart-loading-state">
+                  <p class="chart-widget-title">{{ msg.chart.title }}</p>
+                  <div class="chart-loading-content">
+                    <div class="chart-loading-spinner" />
+                    <span class="chart-loading-label">Rendering visualization...</span>
+                  </div>
+                </div>
+                <!-- Loaded chart -->
+                <LineChartWidget
+                  v-else
+                  :title="msg.chart.title"
+                  :value="msg.chart.value"
+                  :chart-data="msg.chart.chartData"
+                />
+              </div>
+
+              <!-- Chart processing bar (shown while chart is loading) -->
+              <div v-if="msg.chart && msg.chartLoading" class="processing-module">
+                <div class="processing-bar">
+                  <div class="processing-spinner" />
+                  <span class="processing-text">Getting tabular data...</span>
+                </div>
+              </div>
+
               <!-- Action buttons — only on the LAST AI message -->
               <div v-if="i === lastAiMessageIndex" class="message-actions">
                 <div class="message-actions-left">
@@ -176,6 +203,7 @@ import DtIconCopy from '@dialpad/dialtone-icons/vue3/copy'
 import DtIconListBullet from '@dialpad/dialtone-icons/vue3/list-bullet'
 import DtIconThumbsUp from '@dialpad/dialtone-icons/vue3/thumbs-up'
 import DtIconThumbsDown from '@dialpad/dialtone-icons/vue3/thumbs-down'
+import LineChartWidget from '../../launchpad/components/LineChartWidget.vue'
 
 const textareaRef = ref(null)
 const conversationRef = ref(null)
@@ -235,6 +263,7 @@ const busyPhrases = [
 
 let phraseInterval = null
 let doneTimeout = null
+let chartLoadTimeout = null
 
 function sendMessage () {
   const text = textareaRef.value?.value?.trim()
@@ -270,23 +299,36 @@ function sendMessage () {
     phraseInterval = null
 
     const matched = mockAnswers[pendingQuestion] || defaultAnswer
-    messages.value.push({
+    const aiMessage = {
       role: 'ai',
       text: pendingQuestion,
       answer: matched.answer,
       suggestions: matched.suggestions,
       time: currentTime(),
-    })
+      chart: matched.chart || null,
+      chartLoading: !!matched.chart,
+    }
+    messages.value.push(aiMessage)
     phase.value = 'done'
     scrollToBottom()
+
+    if (matched.chart) {
+      const msgIndex = messages.value.length - 1
+      chartLoadTimeout = setTimeout(() => {
+        messages.value[msgIndex].chartLoading = false
+        nextTick(() => scrollToBottom())
+      }, 3000)
+    }
   }, busyPhrases.length * 1500)
 }
 
 function resetChat () {
   clearInterval(phraseInterval)
   clearTimeout(doneTimeout)
+  clearTimeout(chartLoadTimeout)
   phraseInterval = null
   doneTimeout = null
+  chartLoadTimeout = null
   phase.value = 'welcome'
   messages.value = []
   sessionTitle.value = ''
@@ -300,6 +342,7 @@ function resetChat () {
 onUnmounted(() => {
   clearInterval(phraseInterval)
   clearTimeout(doneTimeout)
+  clearTimeout(chartLoadTimeout)
   clearTimeout(scrollTimer)
 })
 
@@ -384,8 +427,22 @@ const mockAnswers = {
     suggestions: ['Compare centers by efficiency', 'Center staffing levels', 'Center performance trends'],
   },
   'Show me voice and digital SLA': {
-    answer: '<p>Here\'s your <strong>SLA performance</strong> across voice and digital channels:</p><p><strong>Voice (target: 80/20):</strong> Currently at <strong>76.3%</strong> — below target. The Support queue is the main drag at 71.2%, while Sales is healthy at 83.5%.</p><p><strong>Digital channels:</strong><br>• Live Chat (target: 90/30): <strong>92.1%</strong> ✓<br>• SMS (target: 85/60): <strong>88.7%</strong> ✓<br>• Email (target: 95/4hr): <strong>97.8%</strong> ✓</p><p>Voice SLA has declined 3.2 percentage points over the past two weeks, correlating with a 7% increase in call volume.</p>',
+    answer: '<p>Here\'s your <strong>SLA performance</strong> across voice and digital channels:</p><p><strong>Key Findings</strong></p><ul><li><strong>Overall Q3 SLA Compliance:</strong> 82.4% (above target of 80%)</li><li><strong>Best Performing Channel:</strong> Email at 97.8%</li><li><strong>Improvement Opportunity:</strong> Voice at 76.3%</li><li><strong>Trend:</strong> +2.3% improvement from Q2 2024</li></ul>',
     suggestions: ['SLA by time of day', 'Voice SLA improvement plan', 'Digital channel volume trends'],
+    chart: {
+      title: 'Q3 2024 SLA Performance by Channel',
+      value: '82.4%',
+      chartData: {
+        labels: ['Jul 1', 'Jul 8', 'Jul 15', 'Jul 22', 'Jul 29', 'Aug 5', 'Aug 12', 'Aug 19', 'Aug 26', 'Sep 2', 'Sep 9', 'Sep 16'],
+        datasets: [
+          { label: 'Voice', data: [74, 73.5, 75, 76, 75.5, 76, 77, 76.5, 76, 76.3, 77, 76.3], borderColor: '#602DFF', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+          { label: 'Chat', data: [89, 90, 91, 91.5, 92, 91.8, 92, 92.5, 92, 92.1, 93, 92.1], borderColor: '#FFBD6A', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+          { label: 'SMS', data: [85, 86, 87, 87.5, 88, 88.3, 88, 89, 88.5, 88.7, 89, 88.7], borderColor: '#EA5F94', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [] },
+          { label: 'Email', data: [96, 96.5, 97, 97, 97.5, 97.2, 97.5, 98, 97.8, 97.8, 97.5, 97.8], borderColor: '#A38FF9', borderWidth: 2, tension: 0.4, pointRadius: 0, borderDash: [5, 5] },
+          { label: 'Target', data: [80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80], borderColor: '#ccc', borderWidth: 1.5, tension: 0, pointRadius: 0, borderDash: [5, 5] },
+        ],
+      },
+    },
   },
   'Review agent productivity percentage': {
     answer: '<p>The overall <strong>agent productivity rate</strong> is currently <strong>78.4%</strong>, measured as time spent on active interactions versus total logged-in time.</p><p>Breakdown by team:<br>• Sales: <strong>82.1%</strong> (target: 80%)<br>• Support: <strong>76.8%</strong> (target: 78%)<br>• Billing: <strong>74.2%</strong> (target: 75%)</p><p>Top factors reducing productivity: after-call work averaging 48 seconds over target, and idle time between calls averaging 35 seconds. Agents handling blended voice+chat have 6% higher productivity.</p>',
@@ -957,5 +1014,61 @@ function selectFollowup (text) {
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* Chart widget container */
+.chart-widget-container {
+  margin-top: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  background: #fff;
+  padding: 16px;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+}
+
+/* Chart loading state */
+.chart-widget-title {
+  font-size: 15px;
+  font-weight: 400;
+  color: #1C1C1C;
+  line-height: 1.4;
+  margin: 0 0 16px 0;
+}
+
+.chart-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 260px;
+}
+
+.chart-loading-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    #471571 60deg,
+    #7C229E 120deg,
+    #B02290 180deg,
+    #E92F6F 240deg,
+    #FB7328 300deg,
+    transparent 360deg
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  animation: spin 1s linear infinite;
+}
+
+.chart-loading-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1C1C1C;
+  line-height: 1.2;
 }
 </style>

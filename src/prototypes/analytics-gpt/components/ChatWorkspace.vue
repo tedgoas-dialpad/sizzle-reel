@@ -514,21 +514,36 @@ function selectFollowup (text) {
 
 .conversation-scroll {
   flex: 1;
-  overflow-y: overlay;
+  overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: none;
-}
 
-.conversation-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.conversation-scroll.is-scrolling {
+  /* Firefox: always thin, transparent thumb by default */
   scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
 }
 
-.conversation-scroll.is-scrolling::-webkit-scrollbar {
-  display: block;
+/* Firefox: show thumb color when scrolling */
+.conversation-scroll.is-scrolling {
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+
+/* Webkit/Blink: always-present track, invisible thumb by default */
+.conversation-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.conversation-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.conversation-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+}
+
+/* Webkit/Blink: reveal thumb when scrolling */
+.conversation-scroll.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .chat-center {

@@ -1,5 +1,5 @@
 <template>
-  <div class="d-stack d-stack--gap-500 d-p24">
+  <div class="d-stack d-stack--gap-500 d-p24 d-ta-center">
     <h1 class="d-headline-large">Sizzle Reel</h1>
     <p v-if="prototypes.length === 0" class="d-body-base">
       No prototypes yet.

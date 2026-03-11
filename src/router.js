@@ -12,14 +12,11 @@ const routes = [
     name: 'home',
     component: HomePage,
   },
-  {
-    path: '/prototypes/:name',
-    name: 'prototype',
-    component: () => {
-      const name = window.location.pathname.split('/prototypes/')[1]
-      return import(`./prototypes/${name}/index.vue`)
-    },
-  },
+  ...prototypes.map((proto) => ({
+    path: `/prototypes/${proto.name}`,
+    name: proto.name,
+    component: () => import(`./prototypes/${proto.name}/index.vue`),
+  })),
 ]
 
 const router = createRouter({

@@ -161,9 +161,12 @@ function goToState (state) {
   timeouts.value.push(t)
 }
 
-function stateStartsWithCustomer (state) {
+function stateNeedsUserActionFirst (state) {
   const first = MESSAGES.find(m => m.state === state)
-  return first && first.sender === 'customer'
+  if (first && first.sender === 'customer') return true
+  const prevMessages = MESSAGES.filter(m => m.state === state - 1)
+  if (prevMessages.some(m => m.quickReplies)) return true
+  return false
 }
 
 function showCustomerThenBot (nextState) {
@@ -211,7 +214,7 @@ function startAutoPlay () {
     const t = setTimeout(() => {
       if (!isAutoPlaying.value) return
       state++
-      const isCustomerFirst = stateStartsWithCustomer(state)
+      const isCustomerFirst = stateNeedsUserActionFirst(state)
       if (isCustomerFirst) {
         showCustomerThenBot(state)
       } else {
@@ -239,7 +242,7 @@ function handleKeydown (e) {
     stopAutoPlay()
     if (currentState.value < 6) {
       const next = currentState.value + 1
-      if (stateStartsWithCustomer(next)) {
+      if (stateNeedsUserActionFirst(next)) {
         showCustomerThenBot(next)
       } else {
         showTypingThenAdvance(next)

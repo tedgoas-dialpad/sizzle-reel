@@ -22,7 +22,7 @@ defineProps({
   },
   avatarColor: {
     type: String,
-    default: '#E20074',
+    default: '#1B7D4E',
   },
 })
 </script>

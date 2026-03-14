@@ -57,7 +57,7 @@ defineProps({
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #E20074;
+  background: #1B7D4E;
   animation: pulse 1.2s infinite ease-in-out;
 }
 

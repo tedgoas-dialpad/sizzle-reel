@@ -25,7 +25,7 @@ export const HEADER_CONFIG = {
   bot: {
     name: 'Aerobot',
     role: 'AI assistant',
-    avatarColor: '#E20074',
+    avatarColor: '#1B7D4E',
   },
   agent: {
     name: 'Scarlet',

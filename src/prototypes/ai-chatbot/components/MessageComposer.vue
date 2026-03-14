@@ -89,7 +89,7 @@ defineProps({
   width: 32px;
   height: 32px;
   border: none;
-  background: #E20074;
+  background: #1B7D4E;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -101,6 +101,6 @@ defineProps({
 }
 
 .composer-send-btn:hover {
-  background: #C8006A;
+  background: #15643E;
 }
 </style>

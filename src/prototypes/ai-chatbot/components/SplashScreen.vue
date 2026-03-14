@@ -47,7 +47,7 @@ onMounted(() => {
 }
 
 .splash-screen.brand-loaded {
-  background-color: #E20074;
+  background-color: #1B7D4E;
 }
 
 .splash-avatar-wrapper {
@@ -74,7 +74,7 @@ onMounted(() => {
 }
 
 .splash-avatar.brand-loaded {
-  background-color: #E20074;
+  background-color: #1B7D4E;
   border-color: rgba(255, 255, 255, 0.5);
 }
 

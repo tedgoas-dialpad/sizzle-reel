@@ -11,7 +11,7 @@
           :sender-name="msg.senderName"
           :time="msg.time"
           :text="msg.text"
-          :avatar-color="msg.sender === 'agent' ? '#F5A623' : '#E20074'"
+          :avatar-color="msg.sender === 'agent' ? '#F5A623' : '#1B7D4E'"
           :is-new="msg.state === currentState && isAnimating"
         >
           <!-- Quick replies (state 1 welcome message) -->
@@ -66,7 +66,7 @@
       <TypingIndicator
         v-if="showTyping"
         :sender="typingSender"
-        :avatar-color="typingSender === 'agent' ? '#F5A623' : '#E20074'"
+        :avatar-color="typingSender === 'agent' ? '#F5A623' : '#1B7D4E'"
       />
     </div>
 

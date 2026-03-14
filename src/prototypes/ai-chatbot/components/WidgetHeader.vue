@@ -26,7 +26,7 @@
           <path d="M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
       </button>
-      <button class="header-btn" aria-label="Close">
+      <button class="header-btn" aria-label="Close" @click="$emit('close')">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
@@ -36,6 +36,8 @@
 </template>
 
 <script setup>
+defineEmits(['close'])
+
 defineProps({
   config: {
     type: Object,

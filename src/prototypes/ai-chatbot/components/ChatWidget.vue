@@ -1,6 +1,6 @@
 <template>
   <div class="chat-widget">
-    <WidgetHeader :config="headerConfig" />
+    <WidgetHeader :config="headerConfig" @close="$emit('close')" />
 
     <div ref="messagesRef" class="chat-messages">
       <template v-for="msg in visibleMessages" :key="msg.id">
@@ -93,6 +93,15 @@ import {
   STATE_TIMING,
   TYPING_DURATION,
 } from '../data/conversation.js'
+
+defineEmits(['close'])
+
+const props = defineProps({
+  active: {
+    type: Boolean,
+    default: true,
+  },
+})
 
 const currentState = ref(1)
 const showTyping = ref(false)
@@ -201,17 +210,39 @@ function handleKeydown (e) {
   }
 }
 
+function resetState () {
+  stopAutoPlay()
+  showTyping.value = false
+  timeouts.value.forEach(clearTimeout)
+  timeouts.value = []
+  currentState.value = 1
+  isAnimating.value = true
+}
+
 watch(currentState, () => {
   scrollToBottom()
 })
 
+watch(() => props.active, (val) => {
+  if (val) {
+    resetState()
+    const t = setTimeout(() => {
+      startAutoPlay()
+    }, 2000)
+    timeouts.value.push(t)
+  } else {
+    resetState()
+  }
+})
+
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
-  // Auto-play after a short initial delay
-  const t = setTimeout(() => {
-    startAutoPlay()
-  }, 2000)
-  timeouts.value.push(t)
+  if (props.active) {
+    const t = setTimeout(() => {
+      startAutoPlay()
+    }, 2000)
+    timeouts.value.push(t)
+  }
 })
 
 onUnmounted(() => {

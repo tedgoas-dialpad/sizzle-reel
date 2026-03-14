@@ -16,9 +16,8 @@ export const QUICK_REPLY_OPTIONS = [
 ]
 
 export const SOURCE_LINKS = [
-  { label: 'Shipping Policy & Timelines', url: '#' },
-  { label: 'Track Your Order – Help Center', url: '#' },
-  { label: 'Delay & Weather Disruption FAQ', url: '#' },
+  { label: 'Understanding Shipping Delays', url: '#' },
+  { label: 'How to Track Your Shipment', url: '#' },
 ]
 
 export const HEADER_CONFIG = {
@@ -65,7 +64,6 @@ export const MESSAGES = [
     senderName: 'Aerobot',
     time: '10:24 AM',
     text: 'Sure, I can help you track a shipment! Please enter your tracking number and I\'ll look it up for you.',
-    sources: true,
   },
 
   // State 3: Customer sends tracking number + bot acknowledges

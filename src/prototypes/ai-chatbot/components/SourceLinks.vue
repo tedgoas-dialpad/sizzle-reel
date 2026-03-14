@@ -1,7 +1,6 @@
 <template>
   <div class="source-links" :class="{ 'is-new': isNew }">
     <button class="source-toggle" @click="isOpen = !isOpen">
-      <span class="source-label">Source</span>
       <svg
         class="source-chevron"
         :class="{ 'is-open': isOpen }"
@@ -12,6 +11,7 @@
       >
         <path d="M4 5.5l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
+      <span class="source-label">Source</span>
     </button>
     <Transition name="expand">
       <div v-if="isOpen" class="source-list">
@@ -23,9 +23,6 @@
           target="_blank"
           rel="noopener"
         >
-          <svg class="source-link-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M5.5 3H3.5a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V9.5M8 2.5h3.5V6M6 8l5.5-5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
           <span class="source-link-text">{{ link.label }}</span>
           <button class="source-copy-btn" aria-label="Copy link" @click.prevent.stop>
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -53,15 +50,12 @@ defineProps({
   },
 })
 
-const isOpen = ref(false)
+const isOpen = ref(true)
 </script>
 
 <style scoped>
 .source-links {
   margin-top: 10px;
-  border: 1px solid #E8E8E8;
-  border-radius: 10px;
-  overflow: hidden;
 }
 
 .source-links.is-new {
@@ -71,19 +65,19 @@ const isOpen = ref(false)
 .source-toggle {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 8px 12px;
+  gap: 4px;
+  height: 24px;
+  padding: 0;
   border: none;
-  background: #FAFAFA;
+  background: none;
   cursor: pointer;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 400;
   color: #535353;
 }
 
 .source-toggle:hover {
-  background: #F5F5F5;
+  color: #3A3A3A;
 }
 
 .source-chevron {
@@ -98,27 +92,29 @@ const isOpen = ref(false)
 .source-list {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  margin-left: 8px;
+  margin-top: 2px;
+  padding: 4px;
+  border: 1px solid rgba(28, 28, 28, 0.11);
+  border-radius: 8px;
 }
 
 .source-link-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border-top: 1px solid #E8E8E8;
+  height: 24px;
+  padding: 2px 2px 2px 6px;
   text-decoration: none;
-  color: #3A3A3A;
+  color: #535353;
   font-size: 12px;
+  border-radius: 4px;
   transition: background-color 0.15s;
 }
 
 .source-link-row:hover {
   background: #FAFAFA;
-}
-
-.source-link-icon {
-  flex-shrink: 0;
-  color: #9A9A9A;
 }
 
 .source-link-text {
@@ -130,23 +126,18 @@ const isOpen = ref(false)
 }
 
 .source-copy-btn {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border: none;
   background: none;
-  border-radius: 6px;
+  border-radius: 3px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #9A9A9A;
   flex-shrink: 0;
-  opacity: 0;
-  transition: opacity 0.15s, color 0.15s;
-}
-
-.source-link-row:hover .source-copy-btn {
-  opacity: 1;
+  transition: color 0.15s;
 }
 
 .source-copy-btn:hover {

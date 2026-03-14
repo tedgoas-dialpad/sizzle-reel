@@ -1,12 +1,18 @@
 <template>
   <div class="ai-chatbot-page">
+    <Transition name="splash">
+      <div v-if="isLoading" class="chat-widget-wrapper">
+        <SplashScreen @done="onSplashDone" />
+      </div>
+    </Transition>
+
     <Transition name="widget">
       <div v-if="isOpen" class="chat-widget-wrapper">
         <ChatWidget :active="isOpen" @close="isOpen = false" />
       </div>
     </Transition>
 
-    <button v-if="!isOpen" class="fab" @click="isOpen = true" aria-label="Open chat">
+    <button v-if="!isOpen && !isLoading" class="fab" @click="onFabClick" aria-label="Open chat">
       <!-- Aerolabs logo -->
       <svg width="32" height="16" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M23.8682 7.14697L21.5409 0H15.9998L18.8574 8.77795C19.3785 10.378 20.6315 11.6322 22.2315 12.1556L32.0001 15.3465V9.80418L23.867 7.14812L23.8682 7.14697Z" fill="white"/>
@@ -20,8 +26,19 @@
 <script setup>
 import { ref } from 'vue'
 import ChatWidget from './components/ChatWidget.vue'
+import SplashScreen from './components/SplashScreen.vue'
 
 const isOpen = ref(false)
+const isLoading = ref(false)
+
+function onFabClick() {
+  isLoading.value = true
+}
+
+function onSplashDone() {
+  isLoading.value = false
+  isOpen.value = true
+}
 </script>
 
 <style scoped>
@@ -62,6 +79,31 @@ const isOpen = ref(false)
   transform: translate(-50%, -50%);
   transform-origin: center center;
   z-index: 10;
+}
+
+/* Splash transition */
+.splash-enter-active {
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+
+.splash-leave-active {
+  transition: opacity 0.3s ease-in;
+}
+
+.splash-enter-from {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+.splash-enter-to,
+.splash-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.splash-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 /* Widget transition */

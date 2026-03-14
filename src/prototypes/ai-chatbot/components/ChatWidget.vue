@@ -105,6 +105,7 @@ const props = defineProps({
 
 const currentState = ref(1)
 const showTyping = ref(false)
+const showOnlyCustomerMessages = ref(false)
 const isAnimating = ref(true)
 const isAutoPlaying = ref(false)
 const messagesRef = ref(null)
@@ -117,7 +118,11 @@ const headerConfig = computed(() => {
 })
 
 const visibleMessages = computed(() => {
-  return MESSAGES.filter(m => m.state <= currentState.value)
+  return MESSAGES.filter(m => {
+    if (m.state > currentState.value) return false
+    if (showOnlyCustomerMessages.value && m.state === currentState.value && m.sender !== 'customer') return false
+    return true
+  })
 })
 
 const composerPreview = computed(() => {
@@ -156,6 +161,32 @@ function goToState (state) {
   timeouts.value.push(t)
 }
 
+function stateStartsWithCustomer (state) {
+  const first = MESSAGES.find(m => m.state === state)
+  return first && first.sender === 'customer'
+}
+
+function showCustomerThenBot (nextState) {
+  // Step 1: advance state with customer-only filter — customer msg appears, composer clears
+  showOnlyCustomerMessages.value = true
+  goToState(nextState)
+
+  // Step 2: after a brief pause, show bot typing indicator
+  const t1 = setTimeout(() => {
+    showTyping.value = true
+    scrollToBottom()
+
+    // Step 3: after typing duration, reveal bot messages
+    const t2 = setTimeout(() => {
+      showTyping.value = false
+      showOnlyCustomerMessages.value = false
+      scrollToBottom()
+    }, TYPING_DURATION)
+    timeouts.value.push(t2)
+  }, 300)
+  timeouts.value.push(t1)
+}
+
 function showTypingThenAdvance (nextState) {
   showTyping.value = true
   scrollToBottom()
@@ -180,11 +211,17 @@ function startAutoPlay () {
     const t = setTimeout(() => {
       if (!isAutoPlaying.value) return
       state++
-      showTypingThenAdvance(state)
-      // Schedule the next state after typing + message animation
+      const isCustomerFirst = stateStartsWithCustomer(state)
+      if (isCustomerFirst) {
+        showCustomerThenBot(state)
+      } else {
+        showTypingThenAdvance(state)
+      }
+      // Schedule the next state after transition completes
+      const nextDelay = isCustomerFirst ? 300 + TYPING_DURATION + 500 : TYPING_DURATION + 500
       const t2 = setTimeout(() => {
         scheduleNext()
-      }, TYPING_DURATION + 500)
+      }, nextDelay)
       timeouts.value.push(t2)
     }, delay)
     timeouts.value.push(t)
@@ -201,11 +238,17 @@ function handleKeydown (e) {
   if (e.key === 'ArrowRight') {
     stopAutoPlay()
     if (currentState.value < 6) {
-      showTypingThenAdvance(currentState.value + 1)
+      const next = currentState.value + 1
+      if (stateStartsWithCustomer(next)) {
+        showCustomerThenBot(next)
+      } else {
+        showTypingThenAdvance(next)
+      }
     }
   } else if (e.key === 'ArrowLeft') {
     stopAutoPlay()
     showTyping.value = false
+    showOnlyCustomerMessages.value = false
     goToState(Math.max(1, currentState.value - 1))
   }
 }
@@ -213,6 +256,7 @@ function handleKeydown (e) {
 function resetState () {
   stopAutoPlay()
   showTyping.value = false
+  showOnlyCustomerMessages.value = false
   timeouts.value.forEach(clearTimeout)
   timeouts.value = []
   currentState.value = 1

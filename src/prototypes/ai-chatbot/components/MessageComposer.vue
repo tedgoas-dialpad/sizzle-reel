@@ -6,8 +6,8 @@
       </svg>
     </button>
     <div class="composer-input-wrap">
-      <span class="composer-input" :class="{ 'has-preview': previewText }">
-        {{ previewText || 'New message...' }}
+      <span class="composer-input" :class="{ 'has-preview': displayText, 'is-typing': isTyping }">
+        {{ displayText || 'New message...' }}
       </span>
     </div>
     <button class="composer-btn" aria-label="Emoji">
@@ -27,11 +27,50 @@
 </template>
 
 <script setup>
-defineProps({
+import { ref, watch, onUnmounted } from 'vue'
+
+const props = defineProps({
   previewText: {
     type: String,
     default: '',
   },
+})
+
+const displayText = ref('')
+const isTyping = ref(false)
+let intervalId = null
+
+function clearTyping() {
+  if (intervalId !== null) {
+    clearInterval(intervalId)
+    intervalId = null
+  }
+  isTyping.value = false
+}
+
+watch(() => props.previewText, (newVal) => {
+  clearTyping()
+
+  if (!newVal) {
+    displayText.value = ''
+    return
+  }
+
+  displayText.value = ''
+  isTyping.value = true
+  let i = 0
+
+  intervalId = setInterval(() => {
+    i++
+    displayText.value = newVal.slice(0, i)
+    if (i >= newVal.length) {
+      clearTyping()
+    }
+  }, 50)
+})
+
+onUnmounted(() => {
+  clearTyping()
 })
 </script>
 
@@ -83,6 +122,22 @@ defineProps({
 
 .composer-input.has-preview {
   color: #1C1C1C;
+}
+
+.composer-input.is-typing::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  background: #1C1C1C;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: blink-cursor 0.6s steps(1) infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 .composer-send-btn {

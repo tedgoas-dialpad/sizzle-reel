@@ -2,7 +2,7 @@
   <div :class="['splash-screen', { 'brand-loaded': brandLoaded }]">
     <div class="splash-avatar-wrapper">
       <div :class="['splash-avatar', { 'brand-loaded': brandLoaded }]">
-        <svg v-if="brandLoaded" width="32" height="16" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg v-if="brandLoaded" width="18" height="9" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M23.8682 7.14697L21.5409 0H15.9998L18.8574 8.77795C19.3785 10.378 20.6315 11.6322 22.2315 12.1556L32.0001 15.3465V9.80418L23.867 7.14812L23.8682 7.14697Z" fill="white"/>
           <path fill-rule="evenodd" clip-rule="evenodd" d="M8.13301 7.14706L10.4592 8.85725e-05H16.0003L13.1427 8.77804C12.6216 10.3781 11.3686 11.6322 9.76855 12.1557L0 15.3466V9.80427L8.13301 7.14821V7.14706Z" fill="white"/>
         </svg>

@@ -43,10 +43,20 @@ function onSplashDone() {
 
 <style scoped>
 .ai-chatbot-page {
+  position: relative;
   width: 100vw;
   height: 100vh;
   background: #F0F0F0;
   font-family: var(--dt-font-family-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+}
+
+.ai-chatbot-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/sizzle-reel/aerolabs-bg.jpg') center / cover no-repeat;
+  opacity: 0.5;
+  z-index: 0;
 }
 
 .fab {

@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage.vue'
 const prototypes = [
   { name: 'analytics-gpt', label: 'AnalyticsGPT' },
   { name: 'launchpad', label: 'Launchpad' },
+  { name: 'ai-chatbot', label: 'AI Chatbot' },
 ]
 
 const routes = [

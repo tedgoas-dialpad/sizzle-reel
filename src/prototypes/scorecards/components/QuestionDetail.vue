@@ -167,8 +167,8 @@ function handleAccept() {
 <style scoped>
 .question-detail {
   background: white;
-  border: 1px solid #471571;
-  border-radius: 16px;
+  border: 1px solid transparent;
+  border-image: linear-gradient(135deg, #471571 0%, #551B84 3.08%, #7C229E 14.48%, #9024A4 23.67%, #B02290 35.5%, #D32B86 48.3%, #E92F6F 60.29%, #F6484F 70.08%, #FB7328 90.02%, #F3960F 97.29%, #F3960F 100%) 1;
   overflow: hidden;
   box-shadow: 0px 1px 2px rgba(0,0,0,0.03), 0px 2px 4px rgba(0,0,0,0.04), 0px 2px 16px rgba(0,0,0,0.08);
   display: flex;

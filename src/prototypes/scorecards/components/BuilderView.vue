@@ -41,26 +41,39 @@
           <div class="builder-title-row">
             <h1 class="builder-title">{{ scorecardMeta.name }}</h1>
             <div class="builder-ai-badge">
-              <span class="builder-ai-badge-sparkle">&#10024;</span>
-              {{ scorecardMeta.gradeBy }}
-              <span class="builder-ai-badge-arrow">&#9662;</span>
+              <DtIconSparkle size="200" class="builder-ai-badge-icon" />
+              <span class="builder-ai-badge-text">{{ scorecardMeta.gradeBy }}</span>
+            </div>
+            <div class="builder-draft-badge">
+              <span class="builder-draft-badge-text">Draft</span>
             </div>
           </div>
-          <p class="builder-description">Add a description</p>
           <div class="builder-filters">
-            <button class="builder-filter-btn">Contact centers (0) <span>&#9662;</span></button>
-            <button class="builder-filter-btn">Coaching teams (0) <span>&#9662;</span></button>
+            <button class="builder-filter-btn">
+              <span>Contact centers (0)</span>
+              <DtIconChevronDown size="200" class="builder-filter-chevron" />
+            </button>
+            <button class="builder-filter-btn">
+              <span>Coaching teams (0)</span>
+              <DtIconChevronDown size="200" class="builder-filter-chevron" />
+            </button>
           </div>
         </div>
         <div class="builder-title-right">
           <div class="builder-actions-row">
-            <span class="builder-status-badge">Draft</span>
-            <button class="builder-icon-btn">&#128465;</button>
-            <button class="builder-icon-btn">&#128203;</button>
-            <div class="builder-language-select">
-              English <span>&#9662;</span>
+            <button class="builder-action-btn builder-action-btn--icon" aria-label="Delete">
+              <DtIconTrash size="300" />
+            </button>
+            <button class="builder-action-btn builder-action-btn--icon" aria-label="Copy">
+              <DtIconCopy size="300" />
+            </button>
+            <div class="builder-action-btn builder-action-btn--select">
+              <span class="builder-select-value">English</span>
+              <DtIconChevronDown size="200" class="builder-select-arrow" />
             </div>
-            <button class="builder-publish-btn">Publish</button>
+            <button class="builder-action-btn builder-action-btn--primary">
+              Publish
+            </button>
           </div>
         </div>
       </div>
@@ -84,6 +97,10 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import DtIconSparkle from '@dialpad/dialtone-icons/vue3/sparkle'
+import DtIconTrash from '@dialpad/dialtone-icons/vue3/trash'
+import DtIconCopy from '@dialpad/dialtone-icons/vue3/copy'
+import DtIconChevronDown from '@dialpad/dialtone-icons/vue3/chevron-down'
 import QuestionList from './QuestionList.vue'
 import QuestionDetail from './QuestionDetail.vue'
 import { questions, scorecardMeta, adminNavItems } from '../data/builderData.js'
@@ -213,15 +230,13 @@ function selectQuestion(id) {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 32px;
-  border-bottom: 1px solid #d2d2d2;
+  padding: 16px 32px 0;
   flex-shrink: 0;
 }
 
 .builder-title-left {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .builder-title-row {
@@ -230,6 +245,7 @@ function selectQuestion(id) {
   gap: 8px;
   padding: 4px 0;
 }
+
 
 .builder-title {
   font-size: 27px;
@@ -240,41 +256,56 @@ function selectQuestion(id) {
 }
 
 .builder-ai-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 3px 6px 3px 4px;
   border: 1px solid rgba(28, 28, 28, 0.11);
   border-radius: 6px;
-  font-size: 12px;
   color: #1c1c1c;
-  background: linear-gradient(170deg, rgba(71,21,113,0.1) 0%, rgba(124,34,158,0.1) 14%, rgba(176,34,144,0.1) 35%, rgba(233,47,111,0.1) 60%, rgba(246,72,79,0.1) 70%, rgba(251,115,40,0.1) 90%, rgba(243,150,15,0.1) 100%);
+  background: linear-gradient(168deg, rgba(71,21,113,0.1) 0%, rgba(85,27,132,0.1) 3.08%, rgba(124,34,158,0.1) 14.48%, rgba(144,36,164,0.1) 23.67%, rgba(176,34,144,0.1) 35.5%, rgba(211,43,134,0.1) 48.3%, rgba(233,47,111,0.1) 60.29%, rgba(246,72,79,0.1) 70.08%, rgba(251,115,40,0.1) 90.02%, rgba(243,150,15,0.1) 97.29%, rgba(243,150,15,0.1) 100%);
 }
 
-.builder-ai-badge-sparkle {
+.builder-ai-badge-icon {
+  background: linear-gradient(135deg, #471571 0%, #551B84 3.08%, #7C229E 14.48%, #9024A4 23.67%, #B02290 35.5%, #D32B86 48.3%, #E92F6F 60.29%, #F6484F 70.08%, #FB7328 90.02%, #F3960F 97.29%, #F3960F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.builder-ai-badge-text {
   font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
-.builder-ai-badge-arrow {
-  font-size: 8px;
+.builder-draft-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  border: 1px solid rgba(28, 28, 28, 0.11);
+  border-radius: 6px;
+  background: white;
 }
 
-.builder-description {
+.builder-draft-badge-text {
   font-size: 12px;
-  color: #535353;
-  margin: 0;
-  line-height: 1.4;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #1c1c1c;
+  white-space: nowrap;
 }
 
 .builder-filters {
   display: flex;
-  gap: 4px;
+  gap: 8px;
 }
 
 .builder-filter-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5.5px;
   padding: 8px 10px 8px 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -283,6 +314,13 @@ function selectQuestion(id) {
   font-weight: 500;
   color: #3a3a3a;
   cursor: default;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.builder-filter-chevron {
+  color: #3a3a3a;
+  flex-shrink: 0;
 }
 
 .builder-title-right {
@@ -294,55 +332,59 @@ function selectQuestion(id) {
 
 .builder-actions-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 8px;
 }
 
-.builder-status-badge {
-  padding: 4px 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  font-size: 12px;
-  color: #3a3a3a;
-  background: white;
-}
-
-.builder-icon-btn {
-  width: 30px;
-  height: 30px;
-  display: flex;
+.builder-action-btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: none;
-  border-radius: 50%;
-  cursor: default;
+  height: 36px;
+  box-sizing: border-box;
+  border-radius: 8px;
   font-size: 14px;
-  color: #3a3a3a;
-}
-
-.builder-language-select {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.03);
-  border: 1.5px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  font-size: 12px;
-  color: #3a3a3a;
-  cursor: default;
-}
-
-.builder-publish-btn {
-  padding: 8px 20px;
-  background: #7C52FF;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
   font-weight: 600;
   cursor: default;
+  line-height: 1.2;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.builder-action-btn--icon {
+  width: 36px;
+  color: #3a3a3a;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.builder-action-btn--icon:hover {
+  background: rgba(28, 28, 28, 0.05);
+}
+
+.builder-action-btn--select {
+  gap: 6px;
+  padding: 0 10px 0 12px;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.03);
+  color: #3a3a3a;
+  font-weight: 400;
+}
+
+.builder-select-value {
+  font-size: 14px;
+}
+
+.builder-select-arrow {
+  color: #808080;
+}
+
+.builder-action-btn--primary {
+  padding: 0 20px;
+  background: #7C52FF;
+  color: white;
+  font-size: 14px;
 }
 
 .builder-content {

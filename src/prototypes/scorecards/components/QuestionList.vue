@@ -109,12 +109,11 @@ const totalPoints = computed(() =>
   gap: 10px;
   padding: 8px 12px;
   background: white;
-  border: 1px solid rgba(0, 0, 0, 0.18);
+  border: 1px solid transparent;
   border-radius: 8px;
   cursor: pointer;
   text-align: left;
   width: 100%;
-  box-shadow: 0px 1px 2px rgba(0,0,0,0.03), 0px 2px 4px rgba(0,0,0,0.04), 0px 2px 16px rgba(0,0,0,0.08);
 }
 
 .question-item:hover {

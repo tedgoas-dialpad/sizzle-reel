@@ -7,107 +7,134 @@
       </div>
 
       <!-- Question text input with compose bar -->
-      <div class="question-compose">
-        <div class="question-compose-input">
-          <div class="question-compose-text">
-            <textarea
-              ref="textareaRef"
-              v-model="localText"
-              class="question-compose-textarea"
-              rows="1"
-            ></textarea>
+      <div class="ai-question-input-wrapper">
+        <input
+          type="text"
+          v-model="localText"
+          class="ai-question-input"
+          placeholder="Enter question text..."
+        />
+
+        <!-- Busy (thinking) banner -->
+        <div v-if="rewriteState === 'busy'" class="ai-rewrite-banner busy">
+          <svg class="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19 2a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0V6h-1a1 1 0 1 1 0-2h1V3a1 1 0 0 1 1-1Zm-9 2a1 1 0 0 1 .91.586l2.033 4.471 4.47 2.033a1 1 0 0 1 0 1.82l-4.47 2.033-2.033 4.47a1 1 0 0 1-1.82 0l-2.033-4.47-4.47-2.033a1 1 0 0 1 0-1.82l4.47-2.033 2.033-4.47A1 1 0 0 1 10 4Zm0 3.417-1.277 2.81a1 1 0 0 1-.497.496L5.416 12l2.81 1.277a1 1 0 0 1 .497.497L10 16.584l1.277-2.81a1 1 0 0 1 .497-.497L14.584 12l-2.81-1.277a1 1 0 0 1-.497-.497L10 7.416ZM18 16a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z" fill="url(#ai-gradient-busy)"/><defs><linearGradient id="ai-gradient-busy" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#471571"/><stop offset=".031" stop-color="#551B84"/><stop offset=".145" stop-color="#7C229E"/><stop offset=".237" stop-color="#9024A4"/><stop offset=".355" stop-color="#B02290"/><stop offset=".483" stop-color="#D32B86"/><stop offset=".603" stop-color="#E92F6F"/><stop offset=".701" stop-color="#F6484F"/><stop offset=".9" stop-color="#FB7328"/><stop offset=".973" stop-color="#F3960F"/><stop offset="1" stop-color="#F3960F"/></linearGradient></defs></svg>
+          <span class="shimmer-text">Thinking to improve the wording on this question...</span>
+        </div>
+
+        <!-- Confirming (suggestion) banner -->
+        <div v-if="rewriteState === 'confirming'" class="ai-rewrite-banner confirming">
+          <button class="banner-close-btn" @click="handleCancel">
+            <DtIconClose size="200" />
+          </button>
+          <div class="banner-header">
+            <svg class="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19 2a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0V6h-1a1 1 0 1 1 0-2h1V3a1 1 0 0 1 1-1Zm-9 2a1 1 0 0 1 .91.586l2.033 4.471 4.47 2.033a1 1 0 0 1 0 1.82l-4.47 2.033-2.033 4.47a1 1 0 0 1-1.82 0l-2.033-4.47-4.47-2.033a1 1 0 0 1 0-1.82l4.47-2.033 2.033-4.47A1 1 0 0 1 10 4Zm0 3.417-1.277 2.81a1 1 0 0 1-.497.496L5.416 12l2.81 1.277a1 1 0 0 1 .497.497L10 16.584l1.277-2.81a1 1 0 0 1 .497-.497L14.584 12l-2.81-1.277a1 1 0 0 1-.497-.497L10 7.416ZM18 16a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z" fill="url(#ai-gradient-banner)"/><defs><linearGradient id="ai-gradient-banner" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#471571"/><stop offset=".031" stop-color="#551B84"/><stop offset=".145" stop-color="#7C229E"/><stop offset=".237" stop-color="#9024A4"/><stop offset=".355" stop-color="#B02290"/><stop offset=".483" stop-color="#D32B86"/><stop offset=".603" stop-color="#E92F6F"/><stop offset=".701" stop-color="#F6484F"/><stop offset=".9" stop-color="#FB7328"/><stop offset=".973" stop-color="#F3960F"/><stop offset="1" stop-color="#F3960F"/></linearGradient></defs></svg>
+            <span class="banner-title">AI suggestion</span>
           </div>
-          <div class="question-compose-actions">
-            <button class="compose-action-btn" @click="handleRewrite">
-              <span class="compose-action-icon">&#10024;</span>
-              Rewrite
-            </button>
-            <button class="compose-action-btn">
-              <span class="compose-action-icon">&#127760;</span>
-              Translate
-            </button>
+          <p class="banner-suggestion-text">{{ currentSuggestion }}</p>
+          <div class="banner-actions">
+            <button class="banner-btn banner-btn--secondary" @click="handleRewrite">Rewrite</button>
+            <button class="banner-btn banner-btn--primary" @click="handleAccept">Accept</button>
           </div>
         </div>
-      </div>
 
-      <!-- AI Rewrite inline -->
-      <AiRewriteInline
-        v-if="rewriteState !== 'idle'"
-        :state="rewriteState"
-        :suggestion="currentSuggestion"
-        @dismiss="rewriteState = 'idle'"
-        @rewrite="handleRewrite"
-        @accept="handleAccept"
-      />
+        <!-- Action buttons (only when idle) -->
+        <div v-if="rewriteState === 'idle'" class="ai-question-actions">
+          <button class="compose-action-btn" @click="handleRewrite">
+            <DtIconAiWrite size="200" />
+            Rewrite
+          </button>
+          <button class="compose-action-btn">
+            <DtIconLanguages size="200" />
+            Translate
+          </button>
+        </div>
+      </div>
 
       <!-- Response type + Responses + Points row -->
       <div class="question-detail-row">
         <div class="question-detail-response-type">
-          <label class="field-label">Response type</label>
-          <div class="fake-select">
-            {{ question.responseType }}
-            <span class="fake-select-arrow">&#9662;</span>
+          <label class="field-label" for="response-type">Response type</label>
+          <div class="dt-select-wrapper">
+            <select id="response-type" v-model="localResponseType" class="dt-select">
+              <option>Yes or no</option>
+              <option>Multiple choice</option>
+              <option>Scale</option>
+              <option>Free text</option>
+            </select>
+            <DtIconChevronDown size="200" class="dt-select-icon" />
           </div>
         </div>
 
         <div class="question-detail-responses">
           <label class="field-label">Responses</label>
           <div
-            v-for="(resp, i) in question.responses"
+            v-for="(resp, i) in localResponses"
             :key="i"
             class="response-row"
           >
             <span class="response-number">{{ i + 1 }}.</span>
-            <div class="response-input">{{ resp.label }}</div>
+            <input
+              type="text"
+              v-model="localResponses[i].label"
+              class="dt-input"
+            />
           </div>
         </div>
 
         <div class="question-detail-points">
-          <div class="points-header">
-            <label class="field-label">Points</label>
-            <span class="points-info">&#9432;</span>
-          </div>
+          <label class="field-label">Points</label>
           <div
-            v-for="(resp, i) in question.responses"
+            v-for="(resp, i) in localResponses"
             :key="i"
-            class="points-input"
-          >{{ resp.points }}</div>
+          >
+            <input
+              type="text"
+              v-model="localResponses[i].points"
+              class="dt-input dt-input--center"
+            />
+          </div>
         </div>
       </div>
 
       <!-- Trigger words -->
       <div class="question-detail-trigger">
-        <label class="field-label">Trigger words/phrases (optional)</label>
+        <label class="field-label" for="trigger-words">Trigger words/phrases (optional)</label>
         <div class="trigger-description">An improved LLM now powers Ai questions for better accuracy. Only use trigger words for exact transcript matches.</div>
-        <div class="fake-input">{{ question.triggerWords || 'Example: "hello there"' }}</div>
+        <input
+          id="trigger-words"
+          type="text"
+          v-model="localTriggerWords"
+          class="dt-input"
+          placeholder='Example: "hello there"'
+        />
       </div>
 
       <!-- Checkboxes -->
       <div class="question-detail-checkboxes">
         <label class="checkbox-item">
-          <input type="checkbox" disabled />
+          <input type="checkbox" v-model="checkboxes.followUp" />
           <div class="checkbox-content">
             <span>Include follow-up question based on response</span>
             <span class="checkbox-desc">Follow-up questions cannot be automated. To use this feature, change setting to Assisted by Ai</span>
           </div>
         </label>
         <label class="checkbox-item">
-          <input type="checkbox" disabled />
+          <input type="checkbox" v-model="checkboxes.commentField" />
           <span>Add a comment field</span>
         </label>
         <label class="checkbox-item">
-          <input type="checkbox" disabled />
+          <input type="checkbox" v-model="checkboxes.allowSkip" />
           <span>Allow question to be skipped</span>
         </label>
         <label class="checkbox-item">
-          <input type="checkbox" disabled />
+          <input type="checkbox" v-model="checkboxes.autoFail" />
           <div class="checkbox-content">
             <span>Automatically fail entire scorecard for certain responses</span>
             <span class="checkbox-desc">Specific responses can automatically assign a 0% grade to a call</span>
           </div>
         </label>
         <label class="checkbox-item">
-          <input type="checkbox" disabled />
+          <input type="checkbox" v-model="checkboxes.saveTemplate" />
           <span>Save question as template</span>
         </label>
       </div>
@@ -124,15 +151,28 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import AiRewriteInline from './AiRewriteInline.vue'
+import { ref, reactive, watch } from 'vue'
+import DtIconChevronDown from '@dialpad/dialtone-icons/vue3/chevron-down'
+import DtIconClose from '@dialpad/dialtone-icons/vue3/close'
+import DtIconAiWrite from '@dialpad/dialtone-icons/vue3/ai-write'
+import DtIconLanguages from '@dialpad/dialtone-icons/vue3/languages'
 
 const props = defineProps({
   question: { type: Object, default: null },
 })
 
 const localText = ref('')
-const rewriteState = ref('idle') // 'idle' | 'thinking' | 'suggestion'
+const localResponseType = ref('')
+const localResponses = ref([])
+const localTriggerWords = ref('')
+const checkboxes = reactive({
+  followUp: false,
+  commentField: false,
+  allowSkip: false,
+  autoFail: false,
+  saveTemplate: false,
+})
+const rewriteState = ref('idle') // 'idle' | 'busy' | 'confirming'
 const currentSuggestion = ref('')
 const suggestionIndex = ref(0)
 
@@ -141,6 +181,9 @@ watch(
   (q) => {
     if (q) {
       localText.value = q.text
+      localResponseType.value = q.responseType
+      localResponses.value = q.responses.map(r => ({ ...r }))
+      localTriggerWords.value = q.triggerWords || ''
       rewriteState.value = 'idle'
       suggestionIndex.value = 0
     }
@@ -149,32 +192,51 @@ watch(
 )
 
 function handleRewrite() {
-  rewriteState.value = 'thinking'
+  rewriteState.value = 'busy'
   setTimeout(() => {
     const suggestions = props.question?.aiSuggestions || []
     currentSuggestion.value = suggestions[suggestionIndex.value % suggestions.length] || 'Improved question text.'
     suggestionIndex.value++
-    rewriteState.value = 'suggestion'
-  }, 2000)
+    rewriteState.value = 'confirming'
+  }, 2500)
 }
 
 function handleAccept() {
   localText.value = currentSuggestion.value
   rewriteState.value = 'idle'
 }
+
+function handleCancel() {
+  rewriteState.value = 'idle'
+  currentSuggestion.value = ''
+}
 </script>
 
 <style scoped>
 .question-detail {
+  position: relative;
   background: white;
-  border: 1px solid transparent;
-  border-image: linear-gradient(135deg, #471571 0%, #551B84 3.08%, #7C229E 14.48%, #9024A4 23.67%, #B02290 35.5%, #D32B86 48.3%, #E92F6F 60.29%, #F6484F 70.08%, #FB7328 90.02%, #F3960F 97.29%, #F3960F 100%) 1;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0px 1px 2px rgba(0,0,0,0.03), 0px 2px 4px rgba(0,0,0,0.04), 0px 2px 16px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
   width: 724px;
   flex-shrink: 0;
+}
+
+.question-detail::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, #471571 0%, #551B84 3.08%, #7C229E 14.48%, #9024A4 23.67%, #B02290 35.5%, #D32B86 48.3%, #E92F6F 60.29%, #F6484F 70.08%, #FB7328 90.02%, #F3960F 97.29%, #F3960F 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .question-detail-fields {
@@ -195,54 +257,50 @@ function handleAccept() {
   line-height: 1.4;
 }
 
-.question-compose {
-  display: flex;
-  flex-direction: column;
-}
-
-.question-compose-input {
-  border: 1px solid rgba(28, 28, 28, 0.5);
+/* Unified input wrapper */
+.ai-question-input-wrapper {
+  border: 1px solid rgba(28, 28, 28, 0.17);
   border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.08);
   background: white;
+  overflow: hidden;
 }
 
-.question-compose-text {
-  padding: 4px 8px;
-}
-
-.question-compose-textarea {
+.ai-question-input {
   width: 100%;
   border: none;
-  outline: none;
-  resize: none;
-  font-size: 15px;
-  color: #3a3a3a;
-  font-family: inherit;
-  line-height: 1.2;
   background: transparent;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #1c1c1c;
+  outline: none;
+  box-sizing: border-box;
 }
 
-.question-compose-actions {
+.ai-question-input::placeholder {
+  color: #808080;
+}
+
+.ai-question-actions {
   display: flex;
-  gap: 2px;
-  padding: 2px 0;
-  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 8px;
+  align-items: center;
+  height: 46px;
 }
 
 .compose-action-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 8px;
+  padding: 6px 16px;
   background: none;
   border: none;
   color: #808080;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .compose-action-btn:hover {
@@ -250,8 +308,117 @@ function handleAccept() {
   color: #3a3a3a;
 }
 
-.compose-action-icon {
+/* Rewrite banner (inside wrapper) */
+.ai-rewrite-banner {
+  padding: 0 12px;
+  height: 46px;
+  background: linear-gradient(140deg, rgba(233, 47, 111, 0.08), rgba(124, 82, 255, 0.08));
+  border-top: 1px solid rgba(233, 47, 111, 0.2);
+}
+
+.ai-rewrite-banner.busy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-rewrite-banner.confirming {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  height: auto;
+  padding: 12px;
+}
+
+.sparkle-icon {
+  flex-shrink: 0;
+}
+
+.shimmer-text {
+  font-size: 15px;
+  animation: shimmer 2s infinite;
+  background: linear-gradient(90deg, #1c1c1c 0%, #1c1c1c 40%, #E92F6F 50%, #1c1c1c 60%, #1c1c1c 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.banner-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #808080;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.banner-close-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #3a3a3a;
+}
+
+.banner-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.banner-title {
   font-size: 12px;
+  font-weight: 400;
+  color: #3a3a3a;
+  line-height: 1.4;
+}
+
+.banner-suggestion-text {
+  font-size: 15px;
+  color: #1c1c1c;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.banner-actions {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-end;
+}
+
+.banner-btn {
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: none;
+  line-height: 1.2;
+}
+
+.banner-btn--secondary {
+  color: #3a3a3a;
+}
+
+.banner-btn--secondary:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.banner-btn--primary {
+  color: #7C52FF;
+}
+
+.banner-btn--primary:hover {
+  background: rgba(124, 82, 255, 0.05);
 }
 
 .question-detail-row {
@@ -281,17 +448,6 @@ function handleAccept() {
   flex-shrink: 0;
 }
 
-.points-header {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.points-info {
-  font-size: 14px;
-  color: #808080;
-}
-
 .field-label {
   font-size: 15px;
   font-weight: 600;
@@ -301,22 +457,66 @@ function handleAccept() {
   display: block;
 }
 
-.fake-select {
+/* Dialtone-style select */
+.dt-select-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.12);
-  border: 1.5px solid transparent;
-  border-radius: 8px;
-  font-size: 15px;
-  color: #808080;
-  cursor: default;
 }
 
-.fake-select-arrow {
-  font-size: 10px;
+.dt-select {
+  width: 100%;
+  appearance: none;
+  padding: 8px 32px 8px 12px;
+  background: white;
+  border: 1.5px solid rgba(28, 28, 28, 0.17);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #3a3a3a;
+  line-height: 1.2;
+  cursor: pointer;
+  outline: none;
+}
+
+.dt-select:focus {
+  border-color: #7C52FF;
+  box-shadow: 0 0 0 1px #7C52FF;
+}
+
+.dt-select-icon {
+  position: absolute;
+  right: 10px;
   color: #808080;
+  pointer-events: none;
+}
+
+/* Dialtone-style text input */
+.dt-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: white;
+  border: 1.5px solid rgba(28, 28, 28, 0.17);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #3a3a3a;
+  line-height: 1.2;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.dt-input::placeholder {
+  color: #808080;
+}
+
+.dt-input:focus {
+  border-color: #7C52FF;
+  box-shadow: 0 0 0 1px #7C52FF;
+}
+
+.dt-input--center {
+  text-align: center;
 }
 
 .response-row {
@@ -331,26 +531,6 @@ function handleAccept() {
   width: 24px;
 }
 
-.response-input {
-  flex: 1;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.12);
-  border: 1.5px solid transparent;
-  border-radius: 8px;
-  font-size: 15px;
-  color: #808080;
-}
-
-.points-input {
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.12);
-  border: 1.5px solid transparent;
-  border-radius: 8px;
-  font-size: 15px;
-  color: #808080;
-  text-align: center;
-}
-
 .question-detail-trigger {
   display: flex;
   flex-direction: column;
@@ -362,15 +542,7 @@ function handleAccept() {
   margin-bottom: 4px;
 }
 
-.fake-input {
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.12);
-  border: 1.5px solid transparent;
-  border-radius: 8px;
-  font-size: 15px;
-  color: #808080;
-}
-
+/* Dialtone-style checkboxes */
 .question-detail-checkboxes {
   display: flex;
   flex-direction: column;
@@ -383,12 +555,16 @@ function handleAccept() {
   gap: 8px;
   font-size: 15px;
   color: #1c1c1c;
-  cursor: default;
+  cursor: pointer;
 }
 
 .checkbox-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
   margin-top: 3px;
   accent-color: #7C52FF;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .checkbox-content {

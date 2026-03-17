@@ -12,6 +12,10 @@
           type="text"
           v-model="localText"
           class="ai-question-input"
+          :class="{
+            'ai-blur-out': acceptPhase === 'blur-out',
+            'ai-blur-in': acceptPhase === 'blur-in',
+          }"
           placeholder="Enter question text..."
         />
 
@@ -185,6 +189,7 @@ const checkboxes = reactive({
   saveTemplate: false,
 })
 const rewriteState = ref('idle') // 'idle' | 'busy' | 'confirming'
+const acceptPhase = ref('none') // 'none' | 'blur-out' | 'blur-in'
 const bannerRef = ref(null)
 const currentSuggestion = ref('')
 const suggestionIndex = ref(0)
@@ -233,8 +238,16 @@ function handleRewrite() {
 }
 
 function handleAccept() {
-  localText.value = currentSuggestion.value
-  rewriteState.value = 'idle'
+  acceptPhase.value = 'blur-out'                   // blur + fade old text
+  setTimeout(() => {
+    localText.value = currentSuggestion.value      // swap while hidden
+    acceptPhase.value = 'blur-in'                  // sharpen new text in
+    rewriteState.value = 'idle'
+    currentSuggestion.value = ''
+  }, 200)
+  setTimeout(() => {
+    acceptPhase.value = 'none'                     // clean up
+  }, 450)
 }
 
 function handleCancel() {
@@ -306,6 +319,18 @@ function handleCancel() {
   color: #1c1c1c;
   outline: none;
   box-sizing: border-box;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.ai-question-input.ai-blur-out {
+  filter: blur(3px);
+  opacity: 0;
+}
+
+.ai-question-input.ai-blur-in {
+  filter: blur(3px);
+  opacity: 0;
+  transition: none;
 }
 
 .ai-question-input::placeholder {

@@ -24,7 +24,7 @@
             <div class="question-item-meta">
               <span>{{ q.responses[0]?.points || 10 }} points</span>
               <span>{{ q.responseType }}</span>
-              <span v-if="q.isAi" class="question-item-ai">&#10024;</span>
+              <DtIconSparkle v-if="q.isAi" size="100" class="question-item-ai" />
             </div>
           </div>
         </div>
@@ -33,11 +33,11 @@
 
     <div class="question-list-footer">
       <button class="question-list-btn question-list-btn--ai">
-        <span class="question-list-btn-icon">&#10024;</span>
+        <svg class="question-list-btn-icon" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19 2a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0V6h-1a1 1 0 1 1 0-2h1V3a1 1 0 0 1 1-1Zm-9 2a1 1 0 0 1 .91.586l2.033 4.471 4.47 2.033a1 1 0 0 1 0 1.82l-4.47 2.033-2.033 4.47a1 1 0 0 1-1.82 0l-2.033-4.47-4.47-2.033a1 1 0 0 1 0-1.82l4.47-2.033 2.033-4.47A1 1 0 0 1 10 4Zm0 3.417-1.277 2.81a1 1 0 0 1-.497.496L5.416 12l2.81 1.277a1 1 0 0 1 .497.497L10 16.584l1.277-2.81a1 1 0 0 1 .497-.497L14.584 12l-2.81-1.277a1 1 0 0 1-.497-.497L10 7.416ZM18 16a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z" fill="currentColor"/></svg>
         Add Ai Questions
       </button>
       <button class="question-list-btn question-list-btn--create">
-        <span class="question-list-btn-icon">&#9998;</span>
+        <DtIconAiWrite size="200" class="question-list-btn-icon" />
         Create Question
       </button>
     </div>
@@ -46,6 +46,8 @@
 
 <script setup>
 import { computed } from 'vue'
+import DtIconSparkle from '@dialpad/dialtone-icons/vue3/sparkle'
+import DtIconAiWrite from '@dialpad/dialtone-icons/vue3/ai-write'
 
 const props = defineProps({
   questions: { type: Array, required: true },
@@ -85,16 +87,16 @@ const totalPoints = computed(() =>
 }
 
 .question-list-meta-text {
-  font-size: 15px;
-  color: #535353;
-  line-height: 1.4;
+  font-size: 12px;
+  color: #808080;
+  line-height: 1.2;
 }
 
 .question-list-meta-dot {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: #535353;
+  background: #808080;
 }
 
 .question-list-items {
@@ -107,7 +109,7 @@ const totalPoints = computed(() =>
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 12px;
+  padding: 12px 12px;
   background: white;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -121,7 +123,7 @@ const totalPoints = computed(() =>
 }
 
 .question-item--selected {
-  border-color: #471571;
+  border-color: rgba(0, 0, 0, 0.12);
   background: #faf8ff;
 }
 
@@ -165,7 +167,7 @@ const totalPoints = computed(() =>
 }
 
 .question-item-ai {
-  font-size: 12px;
+  color: #808080;
 }
 
 .question-list-footer {
@@ -187,7 +189,7 @@ const totalPoints = computed(() =>
 }
 
 .question-list-btn-icon {
-  font-size: 12px;
+  flex-shrink: 0;
 }
 
 .question-list-btn--ai {

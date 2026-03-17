@@ -15,26 +15,38 @@
           placeholder="Enter question text..."
         />
 
-        <!-- Busy (thinking) banner -->
-        <div v-if="rewriteState === 'busy'" class="ai-rewrite-banner busy">
-          <svg class="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19 2a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0V6h-1a1 1 0 1 1 0-2h1V3a1 1 0 0 1 1-1Zm-9 2a1 1 0 0 1 .91.586l2.033 4.471 4.47 2.033a1 1 0 0 1 0 1.82l-4.47 2.033-2.033 4.47a1 1 0 0 1-1.82 0l-2.033-4.47-4.47-2.033a1 1 0 0 1 0-1.82l4.47-2.033 2.033-4.47A1 1 0 0 1 10 4Zm0 3.417-1.277 2.81a1 1 0 0 1-.497.496L5.416 12l2.81 1.277a1 1 0 0 1 .497.497L10 16.584l1.277-2.81a1 1 0 0 1 .497-.497L14.584 12l-2.81-1.277a1 1 0 0 1-.497-.497L10 7.416ZM18 16a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z" fill="url(#ai-gradient-busy)"/><defs><linearGradient id="ai-gradient-busy" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#471571"/><stop offset=".031" stop-color="#551B84"/><stop offset=".145" stop-color="#7C229E"/><stop offset=".237" stop-color="#9024A4"/><stop offset=".355" stop-color="#B02290"/><stop offset=".483" stop-color="#D32B86"/><stop offset=".603" stop-color="#E92F6F"/><stop offset=".701" stop-color="#F6484F"/><stop offset=".9" stop-color="#FB7328"/><stop offset=".973" stop-color="#F3960F"/><stop offset="1" stop-color="#F3960F"/></linearGradient></defs></svg>
-          <span class="shimmer-text">Thinking to improve the wording on this question...</span>
-        </div>
-
-        <!-- Confirming (suggestion) banner -->
-        <div v-if="rewriteState === 'confirming'" class="ai-rewrite-banner confirming">
-          <button class="banner-close-btn" @click="handleCancel">
-            <DtIconClose size="200" />
-          </button>
-          <div class="banner-header">
-            <svg class="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19 2a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0V6h-1a1 1 0 1 1 0-2h1V3a1 1 0 0 1 1-1Zm-9 2a1 1 0 0 1 .91.586l2.033 4.471 4.47 2.033a1 1 0 0 1 0 1.82l-4.47 2.033-2.033 4.47a1 1 0 0 1-1.82 0l-2.033-4.47-4.47-2.033a1 1 0 0 1 0-1.82l4.47-2.033 2.033-4.47A1 1 0 0 1 10 4Zm0 3.417-1.277 2.81a1 1 0 0 1-.497.496L5.416 12l2.81 1.277a1 1 0 0 1 .497.497L10 16.584l1.277-2.81a1 1 0 0 1 .497-.497L14.584 12l-2.81-1.277a1 1 0 0 1-.497-.497L10 7.416ZM18 16a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z" fill="url(#ai-gradient-banner)"/><defs><linearGradient id="ai-gradient-banner" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#471571"/><stop offset=".031" stop-color="#551B84"/><stop offset=".145" stop-color="#7C229E"/><stop offset=".237" stop-color="#9024A4"/><stop offset=".355" stop-color="#B02290"/><stop offset=".483" stop-color="#D32B86"/><stop offset=".603" stop-color="#E92F6F"/><stop offset=".701" stop-color="#F6484F"/><stop offset=".9" stop-color="#FB7328"/><stop offset=".973" stop-color="#F3960F"/><stop offset="1" stop-color="#F3960F"/></linearGradient></defs></svg>
-            <span class="banner-title">AI suggestion</span>
-          </div>
-          <p class="banner-suggestion-text">{{ currentSuggestion }}</p>
-          <div class="banner-actions">
-            <button class="banner-btn banner-btn--secondary" @click="handleRewrite">Rewrite</button>
-            <button class="banner-btn banner-btn--primary" @click="handleAccept">Accept</button>
-          </div>
+        <!-- Rewrite banner (busy or confirming) -->
+        <div
+          v-if="rewriteState === 'busy' || rewriteState === 'confirming'"
+          ref="bannerRef"
+          class="ai-rewrite-banner"
+        >
+          <Transition name="banner-fade" mode="out-in"
+            @before-leave="onBeforeLeave"
+            @enter="onEnter"
+            @after-enter="onAfterEnter"
+          >
+            <!-- Busy content -->
+            <div v-if="rewriteState === 'busy'" key="busy" class="banner-busy">
+              <svg class="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19 2a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0V6h-1a1 1 0 1 1 0-2h1V3a1 1 0 0 1 1-1Zm-9 2a1 1 0 0 1 .91.586l2.033 4.471 4.47 2.033a1 1 0 0 1 0 1.82l-4.47 2.033-2.033 4.47a1 1 0 0 1-1.82 0l-2.033-4.47-4.47-2.033a1 1 0 0 1 0-1.82l4.47-2.033 2.033-4.47A1 1 0 0 1 10 4Zm0 3.417-1.277 2.81a1 1 0 0 1-.497.496L5.416 12l2.81 1.277a1 1 0 0 1 .497.497L10 16.584l1.277-2.81a1 1 0 0 1 .497-.497L14.584 12l-2.81-1.277a1 1 0 0 1-.497-.497L10 7.416ZM18 16a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z" fill="url(#ai-gradient-busy)"/><defs><linearGradient id="ai-gradient-busy" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#471571"/><stop offset=".031" stop-color="#551B84"/><stop offset=".145" stop-color="#7C229E"/><stop offset=".237" stop-color="#9024A4"/><stop offset=".355" stop-color="#B02290"/><stop offset=".483" stop-color="#D32B86"/><stop offset=".603" stop-color="#E92F6F"/><stop offset=".701" stop-color="#F6484F"/><stop offset=".9" stop-color="#FB7328"/><stop offset=".973" stop-color="#F3960F"/><stop offset="1" stop-color="#F3960F"/></linearGradient></defs></svg>
+              <span class="shimmer-text">Thinking to improve the wording on this question...</span>
+            </div>
+            <!-- Confirming content -->
+            <div v-else key="confirming" class="banner-confirming">
+              <button class="banner-close-btn" @click="handleCancel">
+                <DtIconClose size="200" />
+              </button>
+              <div class="banner-header">
+                <svg class="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19 2a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0V6h-1a1 1 0 1 1 0-2h1V3a1 1 0 0 1 1-1Zm-9 2a1 1 0 0 1 .91.586l2.033 4.471 4.47 2.033a1 1 0 0 1 0 1.82l-4.47 2.033-2.033 4.47a1 1 0 0 1-1.82 0l-2.033-4.47-4.47-2.033a1 1 0 0 1 0-1.82l4.47-2.033 2.033-4.47A1 1 0 0 1 10 4Zm0 3.417-1.277 2.81a1 1 0 0 1-.497.496L5.416 12l2.81 1.277a1 1 0 0 1 .497.497L10 16.584l1.277-2.81a1 1 0 0 1 .497-.497L14.584 12l-2.81-1.277a1 1 0 0 1-.497-.497L10 7.416ZM18 16a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z" fill="url(#ai-gradient-banner)"/><defs><linearGradient id="ai-gradient-banner" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#471571"/><stop offset=".031" stop-color="#551B84"/><stop offset=".145" stop-color="#7C229E"/><stop offset=".237" stop-color="#9024A4"/><stop offset=".355" stop-color="#B02290"/><stop offset=".483" stop-color="#D32B86"/><stop offset=".603" stop-color="#E92F6F"/><stop offset=".701" stop-color="#F6484F"/><stop offset=".9" stop-color="#FB7328"/><stop offset=".973" stop-color="#F3960F"/><stop offset="1" stop-color="#F3960F"/></linearGradient></defs></svg>
+                <span class="banner-title">AI suggestion</span>
+              </div>
+              <p class="banner-suggestion-text">{{ currentSuggestion }}</p>
+              <div class="banner-actions">
+                <button class="banner-btn banner-btn--secondary" @click="handleRewrite">Rewrite</button>
+                <button class="banner-btn banner-btn--primary" @click="handleAccept">Accept</button>
+              </div>
+            </div>
+          </Transition>
         </div>
 
         <!-- Action buttons (only when idle) -->
@@ -173,6 +185,7 @@ const checkboxes = reactive({
   saveTemplate: false,
 })
 const rewriteState = ref('idle') // 'idle' | 'busy' | 'confirming'
+const bannerRef = ref(null)
 const currentSuggestion = ref('')
 const suggestionIndex = ref(0)
 
@@ -190,6 +203,24 @@ watch(
   },
   { immediate: true }
 )
+
+function onBeforeLeave() {
+  if (bannerRef.value) {
+    bannerRef.value.style.height = bannerRef.value.offsetHeight + 'px'
+  }
+}
+
+function onEnter(el) {
+  if (bannerRef.value) {
+    bannerRef.value.style.height = el.offsetHeight + 'px'
+  }
+}
+
+function onAfterEnter() {
+  if (bannerRef.value) {
+    bannerRef.value.style.height = ''
+  }
+}
 
 function handleRewrite() {
   rewriteState.value = 'busy'
@@ -311,24 +342,38 @@ function handleCancel() {
 /* Rewrite banner (inside wrapper) */
 .ai-rewrite-banner {
   padding: 0 12px;
-  height: 46px;
   background: linear-gradient(140deg, rgba(233, 47, 111, 0.08), rgba(124, 82, 255, 0.08));
   border-top: 1px solid rgba(233, 47, 111, 0.2);
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: height 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.ai-rewrite-banner.busy {
+.banner-busy {
   display: flex;
   align-items: center;
   gap: 8px;
+  height: 46px;
+  box-sizing: border-box;
 }
 
-.ai-rewrite-banner.confirming {
+.banner-confirming {
   display: flex;
   flex-direction: column;
   gap: 10px;
   position: relative;
-  height: auto;
-  padding: 12px;
+  padding: 12px 0;
+}
+
+/* Crossfade transition */
+.banner-fade-enter-active,
+.banner-fade-leave-active {
+  transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.banner-fade-enter-from,
+.banner-fade-leave-to {
+  opacity: 0;
 }
 
 .sparkle-icon {

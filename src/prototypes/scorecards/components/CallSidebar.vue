@@ -4,15 +4,15 @@
     <div class="call-sidebar-nav">
       <span class="call-sidebar-nav-link">History</span>
       <div class="call-sidebar-nav-arrows">
-        <button class="call-sidebar-nav-btn">&larr; Prev</button>
-        <button class="call-sidebar-nav-btn">Next &rarr;</button>
+        <button class="call-sidebar-nav-btn"><DtIconArrowLeft size="100" /> Prev</button>
+        <button class="call-sidebar-nav-btn">Next <DtIconArrowRight size="100" /></button>
       </div>
     </div>
 
     <!-- Details -->
     <div class="call-sidebar-section">
       <div class="call-sidebar-section-title">
-        <span class="call-sidebar-icon">&#128197;</span>
+        <DtIconCalendar size="100" class="call-sidebar-icon" />
         Details
       </div>
       <div class="call-sidebar-details">
@@ -25,7 +25,7 @@
     <!-- Chapters -->
     <div class="call-sidebar-section">
       <div class="call-sidebar-section-title">
-        <span class="call-sidebar-icon">&#128269;</span>
+        <DtIconMap size="100" class="call-sidebar-icon" />
         Chapters
       </div>
       <div class="call-sidebar-chapters">
@@ -36,7 +36,7 @@
           @click="$emit('scrollToChapter', ch.id)"
         >
           <span class="chapter-time" v-if="ch.time">{{ ch.time }}</span>
-          <span v-else class="chapter-ai-icon">&#10024;</span>
+          <DtIconDialpadSparkle v-else class="chapter-ai-icon" size="100" />
           <span class="chapter-label">{{ ch.label }}</span>
         </button>
       </div>
@@ -45,7 +45,7 @@
     <!-- Moments -->
     <div class="call-sidebar-section">
       <div class="call-sidebar-section-title">
-        <span class="call-sidebar-icon">&#9889;</span>
+        <DtIconLightningBolt size="100" class="call-sidebar-icon" />
         Moments
       </div>
       <div class="call-sidebar-moments">
@@ -58,15 +58,24 @@
 
     <!-- Actions -->
     <div class="call-sidebar-actions">
-      <button class="call-sidebar-action-btn">&#128279; Share</button>
-      <button class="call-sidebar-action-btn">&#128229; Download</button>
-      <button class="call-sidebar-action-btn">&#128203; Add to playlist</button>
+      <button class="call-sidebar-action-btn"><DtIconShare2 size="100" /> Share</button>
+      <button class="call-sidebar-action-btn"><DtIconDownload size="100" /> Download</button>
+      <button class="call-sidebar-action-btn"><DtIconListAdd size="100" /> Add to playlist</button>
     </div>
   </aside>
 </template>
 
 <script setup>
 import { callDetails, chapters, moments } from '../data/callData.js'
+import DtIconCalendar from '@dialpad/dialtone-icons/vue3/calendar'
+import DtIconMap from '@dialpad/dialtone-icons/vue3/map'
+import DtIconLightningBolt from '@dialpad/dialtone-icons/vue3/lightning-bolt'
+import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
+import DtIconShare2 from '@dialpad/dialtone-icons/vue3/share-2'
+import DtIconDownload from '@dialpad/dialtone-icons/vue3/download'
+import DtIconListAdd from '@dialpad/dialtone-icons/vue3/list-add'
+import DtIconArrowLeft from '@dialpad/dialtone-icons/vue3/arrow-left'
+import DtIconArrowRight from '@dialpad/dialtone-icons/vue3/arrow-right'
 
 defineEmits(['scrollToChapter'])
 </script>
@@ -99,6 +108,9 @@ defineEmits(['scrollToChapter'])
 }
 
 .call-sidebar-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 14px;
   color: #808080;
   background: none;
@@ -122,7 +134,8 @@ defineEmits(['scrollToChapter'])
 }
 
 .call-sidebar-icon {
-  font-size: 14px;
+  width: 14px;
+  height: 14px;
 }
 
 .call-sidebar-details {
@@ -213,6 +226,9 @@ defineEmits(['scrollToChapter'])
 }
 
 .call-sidebar-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 14px;
   color: #1c1c1c;
   background: none;

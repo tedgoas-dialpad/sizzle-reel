@@ -22,9 +22,9 @@
         <div class="scorecard-question-answers">
           <!-- Selected answer -->
           <div class="scorecard-answer scorecard-answer--selected">
-            <span class="scorecard-answer-check">&#10003;</span>
+            <DtIconCheck class="scorecard-answer-check" size="100" />
             <span class="scorecard-answer-label">{{ q.answer }}</span>
-            <span v-if="q.gradedByAi" class="scorecard-ai-badge">Graded by Ai &#10024;</span>
+            <span v-if="q.gradedByAi" class="scorecard-ai-badge">Graded by Ai <DtIconDialpadSparkle size="100" /></span>
           </div>
           <!-- Non-selected answer -->
           <div class="scorecard-answer">
@@ -39,6 +39,8 @@
 
 <script setup>
 import { scorecardQuestions } from '../data/callData.js'
+import DtIconCheck from '@dialpad/dialtone-icons/vue3/check'
+import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
 </script>
 
 <style scoped>
@@ -136,7 +138,6 @@ import { scorecardQuestions } from '../data/callData.js'
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
   color: #52C926;
   margin: 0 4px;
 }
@@ -160,6 +161,9 @@ import { scorecardQuestions } from '../data/callData.js'
 }
 
 .scorecard-ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   font-size: 11px;
   color: #7C52FF;
   background: rgba(124, 82, 255, 0.08);

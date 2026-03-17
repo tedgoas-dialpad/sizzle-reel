@@ -3,10 +3,11 @@
     <!-- Top bar -->
     <div class="call-review-top-bar">
       <div class="call-review-top-left">
-        <div class="call-review-select">
-          <span>Call History</span>
-          <span class="call-review-select-arrow">&#9662;</span>
-        </div>
+        <DtSelectMenu
+          v-model="selectedOffice"
+          :options="[{ value: 'main-office', label: 'Main Office' }]"
+          size="sm"
+        />
       </div>
       <div class="call-review-breadcrumbs">
         <span class="crumb-muted">Call History</span>
@@ -14,7 +15,7 @@
         <span class="crumb-active">Call Review</span>
       </div>
       <div class="call-review-search">
-        <span class="search-icon">&#128269;</span>
+        <DtIconSearch size="100" class="search-icon" />
         <span>Search</span>
       </div>
     </div>
@@ -39,7 +40,10 @@ import CallSidebar from './CallSidebar.vue'
 import PlaybackBar from './PlaybackBar.vue'
 import Transcript from './Transcript.vue'
 import ScorecardResults from './ScorecardResults.vue'
+import { DtSelectMenu } from '@dialpad/dialtone/vue3/lib/select-menu'
+import DtIconSearch from '@dialpad/dialtone-icons/vue3/search'
 
+const selectedOffice = ref('main-office')
 const transcriptRef = ref(null)
 
 function scrollToChapter(chapterId) {
@@ -71,27 +75,12 @@ function scrollToChapter(chapterId) {
   flex-shrink: 0;
 }
 
-.call-review-select {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  font-size: 14px;
-  color: #3a3a3a;
-  background: white;
-}
-
-.call-review-select-arrow {
-  font-size: 10px;
-  color: #808080;
-}
-
 .call-review-breadcrumbs {
   display: flex;
   gap: 6px;
   font-size: 14px;
+  margin-right: auto;
+  margin-left: 16px;
 }
 
 .crumb-muted { color: #808080; }
@@ -103,7 +92,7 @@ function scrollToChapter(chapterId) {
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background: rgba(0, 0, 0, 0.03);
+  background: white;
   border: 1.5px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   font-size: 14px;
@@ -112,7 +101,8 @@ function scrollToChapter(chapterId) {
 }
 
 .search-icon {
-  font-size: 12px;
+  width: 12px;
+  height: 12px;
 }
 
 .call-review-body {

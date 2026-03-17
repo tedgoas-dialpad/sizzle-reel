@@ -1,6 +1,6 @@
 <template>
   <div class="playback-bar">
-    <button class="playback-play-btn">&#9654;</button>
+    <button class="playback-play-btn"><DtIconPlay size="200" /></button>
     <div class="playback-tray-wrapper">
       <div class="playback-tray">
         <div
@@ -13,8 +13,8 @@
       <span class="playback-time">0:00 / 8:10</span>
     </div>
     <div class="playback-controls">
-      <button class="playback-ctrl-btn">&#9198;</button>
-      <button class="playback-ctrl-btn">&#9197;</button>
+      <button class="playback-ctrl-btn"><DtIconRewind size="100" /></button>
+      <button class="playback-ctrl-btn"><DtIconFastForward size="100" /></button>
       <button class="playback-ctrl-btn">1x</button>
     </div>
   </div>
@@ -22,6 +22,9 @@
 
 <script setup>
 import { playbackSegments } from '../data/callData.js'
+import DtIconPlay from '@dialpad/dialtone-icons/vue3/play'
+import DtIconRewind from '@dialpad/dialtone-icons/vue3/rewind'
+import DtIconFastForward from '@dialpad/dialtone-icons/vue3/fast-forward'
 
 const segments = playbackSegments
 </script>

@@ -6,7 +6,7 @@
     <!-- AI Insights block -->
     <div class="transcript-insights" :id="`chapter-insights`">
       <div class="transcript-insights-avatar">
-        <span class="insights-avatar-icon">&#10024;</span>
+        <DtIconDialpadSparkle class="insights-avatar-icon" size="200" />
       </div>
       <div class="transcript-insights-content">
         <div class="transcript-insights-label">Insights</div>
@@ -44,7 +44,7 @@
     <!-- Search bar at bottom -->
     <div class="transcript-search">
       <div class="transcript-search-input">
-        <span class="transcript-search-icon">&#10024;</span>
+        <DtIconDialpadSparkle class="transcript-search-icon" size="300" />
         <span class="transcript-search-placeholder">Explore this conversation</span>
       </div>
     </div>
@@ -53,6 +53,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
 import { aiInsight, transcript, chapters } from '../data/callData.js'
 
 const transcriptRef = ref(null)
@@ -112,6 +113,8 @@ defineExpose({ scrollToChapter })
 
 .insights-avatar-icon {
   color: white;
+  width: 16px;
+  height: 16px;
 }
 
 .transcript-insights-content {
@@ -225,7 +228,8 @@ defineExpose({ scrollToChapter })
 }
 
 .transcript-search-icon {
-  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 .transcript-search-placeholder {

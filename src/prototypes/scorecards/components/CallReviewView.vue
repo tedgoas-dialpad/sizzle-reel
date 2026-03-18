@@ -4,8 +4,8 @@
     <div class="call-review-top-bar">
       <div class="call-review-top-left">
         <DtSelectMenu
-          v-model="selectedOffice"
-          :options="[{ value: 'main-office', label: 'Main Office' }]"
+          v-model="selectedCompany"
+          :options="[{ value: 'my-company', label: 'My Company' }]"
           size="sm"
         />
       </div>
@@ -43,7 +43,7 @@ import ScorecardResults from './ScorecardResults.vue'
 import { DtSelectMenu } from '@dialpad/dialtone/vue3/lib/select-menu'
 import DtIconSearch from '@dialpad/dialtone-icons/vue3/search'
 
-const selectedOffice = ref('main-office')
+const selectedCompany = ref('my-company')
 const transcriptRef = ref(null)
 
 function scrollToChapter(chapterId) {
@@ -73,6 +73,7 @@ function scrollToChapter(chapterId) {
 
 .call-review-top-left {
   flex-shrink: 0;
+  width: 176px;
 }
 
 .call-review-breadcrumbs {

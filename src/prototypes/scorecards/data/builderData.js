@@ -2,7 +2,7 @@ export const scorecardMeta = {
   name: 'Customer care',
   status: 'Draft',
   gradeBy: 'Grade by Ai',
-  breadcrumbs: ['ADMIN', 'OFFICE', 'AI SCORECARDS', 'CUSTOMER CARE'],
+  breadcrumbs: ['Admin', 'Office', 'AI Scorecards', 'Customer Care'],
 }
 
 export const questions = [

@@ -13,8 +13,8 @@
           <span class="crumb-active">By group</span>
         </div>
         <div class="analytics-search">
-          <span class="search-icon">&#128269;</span>
-          <span>Help center</span>
+          <DtIconSearch size="100" class="search-icon" />
+          <span>Search</span>
         </div>
       </div>
 
@@ -25,8 +25,14 @@
           <div class="analytics-title-left">
             <h1 class="analytics-title">AI Scorecards by group</h1>
             <div class="analytics-filters">
-              <button class="analytics-filter-btn">All groups <span>&#9662;</span></button>
-              <button class="analytics-filter-btn analytics-filter-btn--active">Past 60 days <span>&times;</span></button>
+              <button class="analytics-filter-btn">
+                <span>All groups</span>
+                <DtIconChevronDown size="200" class="analytics-filter-chevron" />
+              </button>
+              <button class="analytics-filter-btn analytics-filter-btn--active">
+                <span>Past 60 days</span>
+                <span>&times;</span>
+              </button>
             </div>
           </div>
           <div class="analytics-title-right">
@@ -52,6 +58,8 @@
 import AnalyticsSidebar from './AnalyticsSidebar.vue'
 import ComboChart from './ComboChart.vue'
 import AgentTable from './AgentTable.vue'
+import DtIconChevronDown from '@dialpad/dialtone-icons/vue3/chevron-down'
+import DtIconSearch from '@dialpad/dialtone-icons/vue3/search'
 </script>
 
 <style scoped>
@@ -72,36 +80,40 @@ import AgentTable from './AgentTable.vue'
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 32px;
-  background: #fafafa;
-  border-bottom: 1px solid #e5e5e5;
+  padding: 9px 16px;
+  background: #f9f9f9;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  height: 50px;
+  box-sizing: border-box;
   flex-shrink: 0;
 }
 
 .analytics-breadcrumbs {
   display: flex;
-  gap: 8px;
-  font-size: 12px;
+  gap: 6px;
+  font-size: 14px;
 }
 
-.crumb-muted { color: rgba(0, 0, 0, 0.5); }
-.crumb-active { color: #1c1c1c; font-weight: 500; font-size: 15px; }
-.crumb-separator { color: rgba(0, 0, 0, 0.5); }
+.crumb-muted { color: #808080; }
+.crumb-active { color: #1c1c1c; font-weight: 500; }
+.crumb-separator { color: #808080; }
 
 .analytics-search {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.03);
+  padding: 6px 12px;
+  background: white;
   border: 1.5px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 14px;
   color: #808080;
+  width: 200px;
 }
 
 .search-icon {
-  font-size: 14px;
+  width: 12px;
+  height: 12px;
 }
 
 .analytics-content {
@@ -139,9 +151,9 @@ import AgentTable from './AgentTable.vue'
 }
 
 .analytics-filter-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5.5px;
   padding: 8px 10px 8px 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -150,6 +162,13 @@ import AgentTable from './AgentTable.vue'
   font-weight: 500;
   color: #3a3a3a;
   cursor: default;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.analytics-filter-chevron {
+  color: #3a3a3a;
+  flex-shrink: 0;
 }
 
 .analytics-filter-btn--active {

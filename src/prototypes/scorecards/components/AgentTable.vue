@@ -16,7 +16,8 @@
         <td class="agent-table-td agent-table-td--grade">{{ agent.avgGrade }}</td>
         <td class="agent-table-td agent-table-td--change">
           <span class="agent-trend" :class="`agent-trend--${agent.changeDir}`">
-            <span class="agent-trend-arrow">{{ agent.changeDir === 'up' ? '&#9650;' : '&#9660;' }}</span>
+            <DtIconArrowUp v-if="agent.changeDir === 'up'" size="200" class="agent-trend-arrow" />
+            <DtIconArrowDown v-else size="200" class="agent-trend-arrow" />
             {{ agent.change.replace(/[+-]/, '') }}
           </span>
         </td>
@@ -30,15 +31,17 @@
 
 <script setup>
 import { agentRows } from '../data/analyticsData.js'
+import DtIconArrowUp from '@dialpad/dialtone-icons/vue3/arrow-up'
+import DtIconArrowDown from '@dialpad/dialtone-icons/vue3/arrow-down'
 </script>
 
 <style scoped>
 .agent-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  overflow: hidden;
 }
 
 .agent-table-th {
@@ -49,6 +52,12 @@ import { agentRows } from '../data/analyticsData.js'
   text-align: left;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   white-space: nowrap;
+}
+
+.agent-table-th--name,
+.agent-table-th--grade,
+.agent-table-th--change {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .agent-table-th--grade,
@@ -67,6 +76,12 @@ import { agentRows } from '../data/analyticsData.js'
 
 .agent-table-row:last-child .agent-table-td {
   border-bottom: none;
+}
+
+.agent-table-td--name,
+.agent-table-td--grade,
+.agent-table-td--change {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .agent-table-td--grade,
@@ -102,6 +117,6 @@ import { agentRows } from '../data/analyticsData.js'
 }
 
 .agent-trend-arrow {
-  font-size: 10px;
+  flex-shrink: 0;
 }
 </style>

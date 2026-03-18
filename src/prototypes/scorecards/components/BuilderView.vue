@@ -3,10 +3,11 @@
     <!-- Admin sidebar -->
     <aside class="builder-admin-nav">
       <div class="admin-nav-search">
-        <div class="admin-nav-search-input">
-          Dialpad Office
-          <span class="admin-nav-search-arrow">&#9662;</span>
-        </div>
+        <DtSelectMenu
+          v-model="selectedCompany"
+          :options="[{ value: 'my-company', label: 'My Company' }]"
+          size="sm"
+        />
       </div>
       <div
         v-for="item in adminNavItems"
@@ -30,8 +31,8 @@
           </span>
         </div>
         <div class="builder-search-bar">
-          <span class="builder-search-icon">&#128269;</span>
-          Search help center
+          <DtIconSearch size="100" class="builder-search-icon" />
+          <span>Search</span>
         </div>
       </div>
 
@@ -100,10 +101,13 @@ import { ref, computed } from 'vue'
 import DtIconTrash from '@dialpad/dialtone-icons/vue3/trash'
 import DtIconCopy from '@dialpad/dialtone-icons/vue3/copy'
 import DtIconChevronDown from '@dialpad/dialtone-icons/vue3/chevron-down'
+import DtIconSearch from '@dialpad/dialtone-icons/vue3/search'
+import { DtSelectMenu } from '@dialpad/dialtone/vue3/lib/select-menu'
 import QuestionList from './QuestionList.vue'
 import QuestionDetail from './QuestionDetail.vue'
 import { questions, scorecardMeta, adminNavItems } from '../data/builderData.js'
 
+const selectedCompany = ref('my-company')
 const localQuestions = ref([...questions])
 const selectedQuestionId = ref(questions[0]?.id || null)
 
@@ -132,25 +136,16 @@ function selectQuestion(id) {
 }
 
 .admin-nav-search {
-  padding: 9px 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.admin-nav-search-input {
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(28, 28, 28, 0.11);
+  height: 50px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.03);
-  border: 1.5px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  font-size: 12px;
-  color: #3a3a3a;
 }
 
-.admin-nav-search-arrow {
-  font-size: 10px;
-  color: #808080;
+.admin-nav-search :deep(*) {
+  width: 100%;
 }
 
 .admin-nav-item {
@@ -192,37 +187,40 @@ function selectQuestion(id) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 16px 16px 24px;
+  padding: 9px 16px;
   background: #f9f9f9;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  height: 50px;
+  box-sizing: border-box;
   flex-shrink: 0;
 }
 
 .builder-breadcrumbs {
   display: flex;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
-.crumb-muted { color: #888; }
-.crumb-active { color: black; }
-.crumb-separator { color: #888; }
+.crumb-muted { color: #808080; }
+.crumb-active { color: #1c1c1c; font-weight: 500; }
+.crumb-separator { color: #808080; }
 
 .builder-search-bar {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.03);
+  padding: 6px 12px;
+  background: white;
   border: 1.5px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 14px;
   color: #808080;
-  width: 261px;
+  width: 200px;
 }
 
 .builder-search-icon {
-  font-size: 12px;
+  width: 12px;
+  height: 12px;
 }
 
 .builder-title-area {

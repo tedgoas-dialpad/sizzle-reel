@@ -3,7 +3,7 @@ export const chartLabels = [
 ]
 
 export const barData = {
-  aiGraded: [380, 410, 395, 360, 420, 390, 430, 400, 410],
+  aiGraded: [417, 428, 421, 411, 424, 417, 429, 419, 428],
   humanGraded: [23, 12, 19, 29, 16, 23, 11, 21, 12],
 }
 

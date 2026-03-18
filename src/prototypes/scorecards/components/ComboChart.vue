@@ -4,7 +4,7 @@
       <div class="combo-chart-stats">
         <span class="combo-chart-value">{{ summaryStats.averageGrade }}</span>
         <span class="combo-chart-trend">
-          <span class="combo-chart-trend-arrow">&#9650;</span>
+          <DtIconArrowUp size="200" class="combo-chart-trend-arrow" />
           <span class="combo-chart-trend-value">{{ summaryStats.trend.replace('+', '') }}</span>
         </span>
         <span class="combo-chart-comparison">{{ summaryStats.comparison }}</span>
@@ -19,7 +19,7 @@
           <span>Ai graded</span>
         </div>
         <div class="combo-chart-legend-item">
-          <span class="combo-chart-legend-box combo-chart-legend-box--outline" style="background: #ECF0F9; border-color: #8B9DC9;"></span>
+          <span class="combo-chart-legend-box" style="background: #ECF0F9;"></span>
           <span>Human graded</span>
         </div>
       </div>
@@ -32,17 +32,17 @@
           <div class="combo-chart-tooltip-body">
             <div class="combo-chart-tooltip-header">{{ chartLabels[activeIndex] }}</div>
             <div class="combo-chart-tooltip-row">
-              <span class="combo-chart-tooltip-dot" style="background: #52C926;"></span>
+              <span class="combo-chart-tooltip-line" style="background: #52C926;"></span>
               <span>Avg grade:</span>
               <span>{{ lineData[activeIndex] }}%</span>
             </div>
             <div class="combo-chart-tooltip-row">
-              <span class="combo-chart-tooltip-dot" style="background: #CFDAF0;"></span>
+              <span class="combo-chart-tooltip-box" style="background: #CFDAF0;"></span>
               <span>Ai graded:</span>
               <span>{{ barData.aiGraded[activeIndex] }}</span>
             </div>
             <div class="combo-chart-tooltip-row">
-              <span class="combo-chart-tooltip-dot" style="background: #ECF0F9;"></span>
+              <span class="combo-chart-tooltip-box" style="background: #ECF0F9;"></span>
               <span>Human:</span>
               <span>{{ barData.humanGraded[activeIndex] }}</span>
             </div>
@@ -55,6 +55,7 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
+import DtIconArrowUp from '@dialpad/dialtone-icons/vue3/arrow-up'
 import { Bar } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -95,8 +96,6 @@ const chartDataConfig = computed(() => ({
       label: 'Human graded',
       data: barData.humanGraded,
       backgroundColor: '#ECF0F9',
-      borderColor: '#8B9DC9',
-      borderWidth: 1,
       borderRadius: 0,
       barPercentage: 0.85,
       categoryPercentage: 0.7,
@@ -107,7 +106,7 @@ const chartDataConfig = computed(() => ({
       label: 'Average grade',
       data: lineData,
       borderColor: '#52C926',
-      borderWidth: 2,
+      borderWidth: 3,
       pointRadius: 0,
       pointHoverRadius: 4,
       pointHoverBackgroundColor: '#52C926',
@@ -296,8 +295,8 @@ onMounted(() => {
 }
 
 .combo-chart-trend-arrow {
-  font-size: 10px;
   color: #1AA340;
+  flex-shrink: 0;
 }
 
 .combo-chart-trend-value {
@@ -335,10 +334,6 @@ onMounted(() => {
   width: 12px;
   height: 12px;
   border-radius: 4px;
-}
-
-.combo-chart-legend-box--outline {
-  border: 1px solid;
 }
 
 .combo-chart-canvas {
@@ -388,10 +383,17 @@ onMounted(() => {
   gap: 8px;
 }
 
-.combo-chart-tooltip-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.combo-chart-tooltip-line {
+  width: 14px;
+  height: 3px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.combo-chart-tooltip-box {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
   flex-shrink: 0;
 }
 </style>

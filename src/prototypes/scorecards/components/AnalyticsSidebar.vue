@@ -2,10 +2,11 @@
   <aside class="analytics-sidebar">
     <!-- Company dropdown -->
     <div class="analytics-sidebar-dropdown">
-      <div class="analytics-sidebar-select">
-        My Company
-        <span class="analytics-sidebar-arrow">&#8645;</span>
-      </div>
+      <DtSelectMenu
+        v-model="selectedCompany"
+        :options="[{ value: 'my-company', label: 'My Company' }]"
+        size="sm"
+      />
     </div>
 
     <!-- Nav items -->
@@ -17,6 +18,7 @@
         :class="{
           'analytics-sidebar-item--active': item.active,
           'analytics-sidebar-item--indented': item.indent === 1,
+          'analytics-sidebar-item--parent': item.expanded,
         }"
       >
         {{ item.label }}
@@ -26,14 +28,17 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { sidebarNavItems } from '../data/analyticsData.js'
+import { DtSelectMenu } from '@dialpad/dialtone/vue3/lib/select-menu'
 
+const selectedCompany = ref('my-company')
 const navItems = sidebarNavItems
 </script>
 
 <style scoped>
 .analytics-sidebar {
-  width: 201px;
+  width: 200px;
   background: #f9f9f9;
   border-right: 1px solid rgba(28, 28, 28, 0.11);
   flex-shrink: 0;
@@ -43,25 +48,16 @@ const navItems = sidebarNavItems
 }
 
 .analytics-sidebar-dropdown {
-  padding: 12px 12px;
+  padding: 0 12px;
   border-bottom: 1px solid rgba(28, 28, 28, 0.11);
-}
-
-.analytics-sidebar-select {
+  height: 50px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: rgba(28, 28, 28, 0.02);
-  border: 1px solid rgba(28, 28, 28, 0.17);
-  border-radius: 8px;
-  font-size: 15px;
-  color: #3a3a3a;
 }
 
-.analytics-sidebar-arrow {
-  font-size: 14px;
-  color: #808080;
+.analytics-sidebar-dropdown :deep(*) {
+  width: 100%;
 }
 
 .analytics-sidebar-nav {
@@ -72,21 +68,33 @@ const navItems = sidebarNavItems
 
 .analytics-sidebar-item {
   padding: 8px 16px;
+  margin-top: 4px;
   font-size: 15px;
   color: #1c1c1c;
   cursor: default;
   line-height: 1.4;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
-.analytics-sidebar-item--active {
-  background: rgba(124, 82, 255, 0.1);
-  color: #7C52FF;
-  font-weight: 500;
+.analytics-sidebar-item--parent {
+  font-size: 12px;
+  line-height: 1.2;
 }
 
 .analytics-sidebar-item--indented {
-  padding-left: 32px;
-  font-size: 15px;
+  padding: 4px 16px 4px 32px;
+  margin: 4px 4px 0;
+  font-size: 12px;
+  line-height: 1.2;
+  border-radius: 50px;
+  height: 30px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.analytics-sidebar-item--active {
+  background: rgba(0, 0, 0, 0.08);
 }
 </style>

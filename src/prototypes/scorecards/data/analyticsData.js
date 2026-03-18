@@ -17,14 +17,14 @@ export const summaryStats = {
 }
 
 export const agentRows = [
-  { name: 'Zoey Kim', avgGrade: '86%', change: '+2%', changeDir: 'up', callsGraded: 56 },
-  { name: 'Kevin Adams', avgGrade: '94%', change: '+2%', changeDir: 'up', callsGraded: 55 },
-  { name: 'Daniel Kim', avgGrade: '82%', change: '+2%', changeDir: 'up', callsGraded: 54 },
-  { name: 'Scarlett Adams', avgGrade: '71%', change: '-1%', changeDir: 'down', callsGraded: 52 },
-  { name: 'Steven Green', avgGrade: '52%', change: '-2%', changeDir: 'down', callsGraded: 50 },
-  { name: 'Sasha Gupta', avgGrade: '93%', change: '-4%', changeDir: 'down', callsGraded: 48 },
-  { name: 'Matthew Rodriguez', avgGrade: '100%', change: '-4%', changeDir: 'down', callsGraded: 44 },
-  { name: 'Abigail Lopez', avgGrade: '78%', change: '-5%', changeDir: 'down', callsGraded: 32 },
+  { name: 'West Coast Sales', avgGrade: '86%', change: '+2%', changeDir: 'up', callsGraded: 56, gradeDistribution: { ai: 48, human: 8 } },
+  { name: 'Enterprise Support', avgGrade: '94%', change: '+2%', changeDir: 'up', callsGraded: 55, gradeDistribution: { ai: 50, human: 5 } },
+  { name: 'Billing & Payments', avgGrade: '82%', change: '+2%', changeDir: 'up', callsGraded: 54, gradeDistribution: { ai: 45, human: 9 } },
+  { name: 'New Customer Onboarding', avgGrade: '71%', change: '-1%', changeDir: 'down', callsGraded: 52, gradeDistribution: { ai: 42, human: 10 } },
+  { name: 'Technical Support', avgGrade: '52%', change: '-2%', changeDir: 'down', callsGraded: 50, gradeDistribution: { ai: 40, human: 10 } },
+  { name: 'Retention & Loyalty', avgGrade: '93%', change: '-4%', changeDir: 'down', callsGraded: 48, gradeDistribution: { ai: 44, human: 4 } },
+  { name: 'East Coast Sales', avgGrade: '100%', change: '-4%', changeDir: 'down', callsGraded: 44, gradeDistribution: { ai: 38, human: 6 } },
+  { name: 'Partner Solutions', avgGrade: '78%', change: '-5%', changeDir: 'down', callsGraded: 32, gradeDistribution: { ai: 26, human: 6 } },
 ]
 
 export const sidebarNavItems = [

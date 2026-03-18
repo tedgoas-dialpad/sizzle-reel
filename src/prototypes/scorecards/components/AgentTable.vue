@@ -2,7 +2,7 @@
   <table class="agent-table">
     <thead>
       <tr>
-        <th class="agent-table-th agent-table-th--name">Agents</th>
+        <th class="agent-table-th agent-table-th--name">Groups</th>
         <th class="agent-table-th agent-table-th--grade">Average grade</th>
         <th class="agent-table-th agent-table-th--change">% change</th>
         <th class="agent-table-th agent-table-th--calls">Calls graded</th>
@@ -13,7 +13,14 @@
         <td class="agent-table-td agent-table-td--name">
           <span class="agent-name-link">{{ agent.name }}</span>
         </td>
-        <td class="agent-table-td agent-table-td--grade">{{ agent.avgGrade }}</td>
+        <td class="agent-table-td agent-table-td--grade">
+          <div class="agent-grade-bar-wrap">
+            <span class="agent-grade-value">{{ agent.avgGrade }}</span>
+            <div class="agent-grade-bar-track">
+              <div class="agent-grade-bar" :style="{ width: agent.avgGrade, background: gradeColor(agent) }"></div>
+            </div>
+          </div>
+        </td>
         <td class="agent-table-td agent-table-td--change">
           <span class="agent-trend" :class="`agent-trend--${agent.changeDir}`">
             <DtIconArrowUp v-if="agent.changeDir === 'up'" size="200" class="agent-trend-arrow" />
@@ -22,7 +29,15 @@
           </span>
         </td>
         <td class="agent-table-td agent-table-td--calls">
-          <span class="agent-calls-link">{{ agent.callsGraded }}</span>
+          <div class="agent-calls-bar-wrap">
+            <span class="agent-calls-value">{{ agent.callsGraded }}</span>
+            <div class="agent-calls-bar-track">
+              <div class="agent-dist-bar" :style="{ width: callsPct(agent) }">
+                <div class="agent-dist-ai" :style="{ width: aiPct(agent) }"></div>
+                <div class="agent-dist-human" :style="{ width: humanPct(agent) }"></div>
+              </div>
+            </div>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -33,6 +48,41 @@
 import { agentRows } from '../data/analyticsData.js'
 import DtIconArrowUp from '@dialpad/dialtone-icons/vue3/arrow-up'
 import DtIconArrowDown from '@dialpad/dialtone-icons/vue3/arrow-down'
+
+const sequentialColors = [
+  'hsl(220, 45%, 96%)',  // 01: 0–10%
+  'hsl(220, 45%, 92%)',  // 02: 10–20%
+  'hsl(218, 45%, 88%)',  // 03: 20–30%
+  'hsl(216, 45%, 84%)',  // 04: 30–40%
+  'hsl(214, 45%, 80%)',  // 05: 40–50%
+  'hsl(212, 45%, 76%)',  // 06: 50–60%
+  'hsl(210, 45%, 72%)',  // 07: 60–70%
+  'hsl(208, 45%, 68%)',  // 08: 70–80%
+  'hsl(206, 45%, 64%)',  // 09: 80–90%
+  'hsl(204, 45%, 58%)',  // 10: 90–100%
+]
+
+function gradeColor (agent) {
+  const pct = parseInt(agent.avgGrade)
+  const idx = Math.min(Math.floor(pct / 10), 9)
+  return sequentialColors[idx]
+}
+
+const maxCalls = Math.max(...agentRows.map(a => a.callsGraded))
+
+function callsPct (agent) {
+  return `${(agent.callsGraded / maxCalls * 100).toFixed(1)}%`
+}
+
+function aiPct (agent) {
+  const total = agent.gradeDistribution.ai + agent.gradeDistribution.human
+  return `${(agent.gradeDistribution.ai / total * 100).toFixed(1)}%`
+}
+
+function humanPct (agent) {
+  const total = agent.gradeDistribution.ai + agent.gradeDistribution.human
+  return `${(agent.gradeDistribution.human / total * 100).toFixed(1)}%`
+}
 </script>
 
 <style scoped>
@@ -60,11 +110,19 @@ import DtIconArrowDown from '@dialpad/dialtone-icons/vue3/arrow-down'
   border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.agent-table-th--grade,
-.agent-table-th--change,
-.agent-table-th--calls {
+.agent-table-th--grade {
+  text-align: left;
+  width: 240px;
+}
+
+.agent-table-th--change {
   text-align: right;
   width: 120px;
+}
+
+.agent-table-th--calls {
+  text-align: left;
+  width: 240px;
 }
 
 .agent-table-td {
@@ -84,22 +142,40 @@ import DtIconArrowDown from '@dialpad/dialtone-icons/vue3/arrow-down'
   border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.agent-table-td--grade,
-.agent-table-td--change,
-.agent-table-td--calls {
+.agent-table-td--grade {
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
+}
+
+.agent-table-td--change {
   text-align: right;
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
+}
+
+.agent-table-td--calls {
   font-feature-settings: 'lnum' 1, 'tnum' 1;
 }
 
 .agent-name-link {
   text-decoration: underline;
   cursor: default;
-  text-transform: capitalize;
 }
 
-.agent-calls-link {
-  text-decoration: underline;
-  cursor: default;
+/* Inline bar next to calls graded */
+.agent-calls-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.agent-calls-value {
+  width: 24px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.agent-calls-bar-track {
+  flex: 1;
+  min-width: 0;
 }
 
 .agent-trend {
@@ -118,5 +194,46 @@ import DtIconArrowDown from '@dialpad/dialtone-icons/vue3/arrow-down'
 
 .agent-trend-arrow {
   flex-shrink: 0;
+}
+
+/* Inline thin bar next to average grade */
+.agent-grade-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.agent-grade-value {
+  width: 40px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.agent-grade-bar-track {
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-grade-bar {
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* Grade distribution stacked bar */
+.agent-dist-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.agent-dist-ai {
+  background: #CFDAF0;
+  height: 100%;
+}
+
+.agent-dist-human {
+  background: #ECF0F9;
+  height: 100%;
 }
 </style>

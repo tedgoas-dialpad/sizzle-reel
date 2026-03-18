@@ -24,7 +24,7 @@
           <div class="scorecard-answer scorecard-answer--selected">
             <DtIconCheck class="scorecard-answer-check" size="100" />
             <span class="scorecard-answer-label">{{ q.answer }}</span>
-            <span v-if="q.gradedByAi" class="scorecard-ai-badge">Graded by Ai <DtIconDialpadSparkle size="100" /></span>
+            <span v-if="q.gradedByAi" class="scorecard-ai-badge"><DtIconDialpadSparkle size="100" /> Graded by Ai</span>
           </div>
           <!-- Non-selected answer -->
           <div class="scorecard-answer">
@@ -62,19 +62,22 @@ import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
 }
 
 .scorecard-tab {
-  padding: 8px 12px;
+  padding: 4px 12px;
   background: none;
   border: none;
-  font-size: 14px;
-  color: #808080;
+  font-size: 12px;
+  font-weight: 500;
+  color: #525252;
   cursor: default;
-  border-bottom: 2px solid transparent;
+  border-radius: 50px;
+  letter-spacing: -0.12px;
+  line-height: 16px;
 }
 
 .scorecard-tab--active {
-  color: #1c1c1c;
-  font-weight: 600;
-  border-bottom-color: #1c1c1c;
+  color: #8200db;
+  background: #f3e8ff;
+  font-weight: 500;
 }
 
 .scorecard-questions {
@@ -89,11 +92,6 @@ import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
   flex-direction: column;
   gap: 12px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.scorecard-question:last-child {
-  border-bottom: none;
 }
 
 .scorecard-question-text {
@@ -103,8 +101,9 @@ import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
 }
 
 .scorecard-question-label {
-  font-size: 15px;
-  color: #1c1c1c;
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
   line-height: 1.4;
   flex: 1;
 }
@@ -129,7 +128,11 @@ import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
 }
 
 .scorecard-answer--selected {
-  gap: 4px;
+  gap: 8px;
+  background: linear-gradient(171deg, rgba(249, 0, 142, 0.1) 10%, rgba(124, 82, 255, 0.1) 90%);
+  border-radius: 8px;
+  padding: 0 2px 0 4px;
+  width: fit-content;
 }
 
 .scorecard-answer-check {
@@ -138,8 +141,8 @@ import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #52C926;
-  margin: 0 4px;
+  color: #000000;
+  margin: 0;
 }
 
 .scorecard-answer-radio {
@@ -164,11 +167,13 @@ import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  font-size: 11px;
-  color: #7C52FF;
-  background: rgba(124, 82, 255, 0.08);
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 12px;
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 3px 6px 3px 4px;
+  border-radius: 6px;
   white-space: nowrap;
+  line-height: 1.2;
 }
 </style>

@@ -20,12 +20,18 @@
           <span class="scorecard-question-points">{{ q.points }}pts</span>
         </div>
         <div class="scorecard-question-answers">
-          <!-- Selected answer -->
-          <div class="scorecard-answer scorecard-answer--selected">
-            <DtIconCheck class="scorecard-answer-check" size="100" />
-            <span class="scorecard-answer-label">{{ q.answer }}</span>
-            <span v-if="q.gradedByAi" class="scorecard-ai-badge"><DtIconDialpadSparkle size="100" /> Graded by Ai</span>
-          </div>
+          <!-- Selected answer: animated swap -->
+          <Transition name="answer-resolve" mode="out-in">
+            <div v-if="i < resolvedCount" key="resolved" class="scorecard-answer scorecard-answer--selected">
+              <DtIconCheck class="scorecard-answer-check" size="100" />
+              <span class="scorecard-answer-label">{{ q.answer }}</span>
+              <span v-if="q.gradedByAi" class="scorecard-ai-badge"><DtIconDialpadSparkle size="100" /> Graded by Ai</span>
+            </div>
+            <div v-else key="unresolved" class="scorecard-answer">
+              <span class="scorecard-answer-radio"></span>
+              <span class="scorecard-answer-label">{{ q.answer }}</span>
+            </div>
+          </Transition>
           <!-- Non-selected answer -->
           <div class="scorecard-answer">
             <span class="scorecard-answer-radio"></span>
@@ -38,9 +44,21 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { scorecardQuestions } from '../data/callData.js'
 import DtIconCheck from '@dialpad/dialtone-icons/vue3/check'
 import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
+
+const resolvedCount = ref(0)
+
+onMounted(() => {
+  const interval = setInterval(() => {
+    resolvedCount.value++
+    if (resolvedCount.value >= scorecardQuestions.length) {
+      clearInterval(interval)
+    }
+  }, 150)
+})
 </script>
 
 <style scoped>
@@ -175,5 +193,20 @@ import DtIconDialpadSparkle from '@dialpad/dialtone-icons/vue3/dialpad-sparkle'
   border-radius: 6px;
   white-space: nowrap;
   line-height: 1.2;
+}
+
+.answer-resolve-enter-active {
+  transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+}
+.answer-resolve-leave-active {
+  transition: opacity 0.12s ease;
+}
+.answer-resolve-enter-from {
+  opacity: 0;
+  filter: blur(4px);
+  transform: scale(0.95);
+}
+.answer-resolve-leave-to {
+  opacity: 0;
 }
 </style>

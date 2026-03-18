@@ -10,6 +10,7 @@
           :key="item.name"
           class="left-bar-icon-btn"
           :class="{ 'left-bar-icon-btn--active': item.name === activeItem }"
+          @click="$emit('icon-click', item.name)"
         >
           <component :is="item.icon" size="400" />
         </button>

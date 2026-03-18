@@ -5,6 +5,7 @@ const prototypes = [
   { name: 'analytics-gpt', label: 'AnalyticsGPT' },
   { name: 'launchpad', label: 'Launchpad' },
   { name: 'ai-chatbot', label: 'AI Chatbot' },
+  { name: 'scorecards', label: 'Scorecards' },
 ]
 
 const routes = [
